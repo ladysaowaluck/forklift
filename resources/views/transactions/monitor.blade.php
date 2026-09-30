@@ -13,11 +13,11 @@
 
     <style>
         :root {
-            --color-primary: #E60012;      
-            --color-secondary: #004B8D;     
-            --color-info: #0086BF;          
+            --color-primary: #ffffff;
+            --color-secondary: #004B8D;   
+            --color-info: #FA7800;          
             --color-success: #28a745;      
-            --color-warning: #ffc107;      
+            --color-warning: #B90019;      
             --color-inactive: #6c757d;      
             --color-background: #0d1117;  
             --color-card: #161b22;         
@@ -30,7 +30,7 @@
             background-color: var(--color-background);
             color: var(--color-text-primary);
             font-family: 'Roboto Mono', monospace;
-            font-size: 1.1rem;
+            font-size: clamp(0.875rem, 1.5vw, 1rem);
             overflow-x: hidden;
         }
 
@@ -41,51 +41,78 @@
 
         .monitor-table-container {
             width: 100%;
-            padding: 1rem;
+            padding: 0.5rem;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .monitor-table-container {
+                padding: 1rem;
+            }
         }
 
         .monitor-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 0.5rem;
+            white-space: nowrap;
         }
 
         .monitor-table th {
             color: var(--color-text-secondary);
             text-transform: uppercase;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 0.75rem;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             border-bottom: 2px solid var(--color-border);
+        }
+
+        @media (min-width: 768px) {
+            .monitor-table th {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
         }
 
         .monitor-table td {
             background-color: var(--color-card);
-            padding: 1.25rem 1.5rem;
+            padding: 0.75rem 0.75rem;
             vertical-align: middle;
             transition: background-color 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        @media (min-width: 768px) {
+            .monitor-table td {
+                padding: 1.25rem 1.5rem;
+                font-size: 1rem;
+            }
         }
         
-        .monitor-table tr:first-child td:first-child { border-top-left-radius: 0.5rem; }
-        .monitor-table tr:first-child td:last-child { border-top-right-radius: 0.5rem; }
-        .monitor-table tr:last-child td:first-child { border-bottom-left-radius: 0.5rem; }
-        .monitor-table tr:last-child td:last-child { border-bottom-right-radius: 0.5rem; }
+        .monitor-table tr td:first-child { border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; }
+        .monitor-table tr td:last-child { border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
 
         .status-cell { text-align: center; }
         .status-badge {
-            padding: 0.5em 1.2em;
+            padding: 0.35em 0.8em;
             font-weight: 700;
             border-radius: 50rem;
             color: #fff;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            font-size: 1rem;
+            font-size: 0.75rem;
+            display: inline-block;
+        }
+
+        @media (min-width: 768px) {
+            .status-badge {
+                padding: 0.5em 1.2em;
+                font-size: 0.9rem;
+            }
         }
 
         .status-Pending { background-color: var(--color-inactive); }
-        .status-Assigned { background-color: var(--color-primary); }
-        
-        .status-In\.Progress { background-color: var(--color-secondary); }
-        
+        .status-Assigned { background-color: var(--color-primary); color: #000; }
+        .status-In-Progress, .status-In\.Progress { background-color: var(--color-secondary); }
         .status-Arrived { background-color: var(--color-info); }
         .status-Completed { background-color: var(--color-success); }
 
@@ -94,14 +121,14 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid py-4 px-lg-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="display-5 fw-bolder monitor-header">
+    <div class="container-fluid py-3 px-2 px-md-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
+            <h1 class="fs-2 fs-md-1 fw-bolder monitor-header mb-0">
                 <i class="fas fa-satellite-dish"></i> Live Monitor
             </h1>
-            <div>
-                <span id="clock" class="fs-4 fw-bold"></span>
-                <p id="last-updated" class="fs-6 mb-0" style="color: var(--color-text-secondary); text-align: right;"></p>
+            <div class="text-start text-md-end">
+                <span id="clock" class="fs-5 fs-md-4 fw-bold"></span>
+                <p id="last-updated" class="fs-6 mb-0" style="color: var(--color-text-secondary);"></p>
             </div>
         </div>
         
@@ -139,8 +166,7 @@
             }
 
             const tableHTML = transactions.map(task => {
-
-                const statusClass = `status-${task.status.replace(' ', '.')}`;
+                const statusClass = `status-${task.status.replace(/\s+/g, '-')}`;
                 const from = task.warehouse_from ? task.warehouse_from.name : 'N/A';
                 const to = task.warehouse_to ? task.warehouse_to.name : 'N/A';
                 const driver = task.driver ? task.driver.name : 'Unassigned';

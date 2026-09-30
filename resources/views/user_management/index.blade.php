@@ -6,18 +6,20 @@
 
 <style>
     :root {
-        --color-primary: #E60012;      
+        --color-primary: #ffffff;      
         --color-secondary: #004B8D;     
         --color-info: #0086BF;         
         --color-inactive: #6c757d;     
         --color-background: #f4f6f9;
         --color-border: #e3e6f0;
+        --color-admin: #FA7800;
         --border-radius-md: 0.75rem;
         --box-shadow-subtle: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
     body {
         background-color: var(--color-background);
         color: #212529;
+        font-size: clamp(0.875rem, 1.5vw, 1rem);
     }
     .card-main-content {
         background-color: #ffffff;
@@ -27,17 +29,33 @@
     }
     .modern-table {
         border-collapse: separate;
-        border-spacing: 0 0.75rem;
-        font-size: 1rem;
+        border-spacing: 0 0.5rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
     }
+
+    @media (min-width: 768px) {
+        .modern-table {
+            border-spacing: 0 0.75rem;
+            font-size: 1rem;
+        }
+    }
+
     .modern-table thead th {
         border: 0;
         color: #6c757d;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         padding-top: 0;
     }
+
+    @media (min-width: 768px) {
+        .modern-table thead th {
+            font-size: 0.85rem;
+        }
+    }
+
     .modern-table tbody tr {
         background-color: #fff;
         border-radius: var(--border-radius-md);
@@ -52,29 +70,45 @@
         position: relative;
     }
     .modern-table tbody td {
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 0.75rem;
         vertical-align: middle;
         border: 0;
     }
+
+    @media (min-width: 768px) {
+        .modern-table tbody td {
+            padding: 1rem 1.5rem;
+        }
+    }
+
     .modern-table tbody td:first-child { border-top-left-radius: var(--border-radius-md); border-bottom-left-radius: var(--border-radius-md); }
     .modern-table tbody td:last-child { border-top-right-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
+    
     .role-badge {
-        padding: 0.4em 1em;
-        font-size: 0.85rem;
+        padding: 0.3em 0.8em;
+        font-size: 0.75rem;
         font-weight: 700;
         border-radius: 50rem;
         color: #fff;
+        display: inline-block;
+    }
+
+    @media (min-width: 768px) {
+        .role-badge {
+            padding: 0.4em 1em;
+            font-size: 0.85rem;
+        }
     }
 </style>
 
-<div class="container-fluid py-4 px-lg-4">
+<div class="container-fluid py-3 py-md-4 px-2 px-md-4">
     
     {{-- Main Header --}}
-    <div class="text-center mb-4">
-        <h1 class="display-5 fw-bolder" style="color: var(--color-primary);">
+    <div class="text-center mb-3 mb-md-4">
+        <h1 class="fw-bolder fs-3 fs-md-1" style="color: var(--color-secondary);">
             <i class="fas fa-users-cog"></i> User Management
         </h1>
-        <p class="text-secondary fs-5 fw-medium">Manage all users and their roles</p>
+        <p class="text-secondary fs-6 fs-md-5 fw-medium mb-0">Manage all users and their roles</p>
     </div>
 
     {{-- Session Success Message --}}
@@ -86,24 +120,24 @@
     @endif
 
     {{-- Main Content Card for Table --}}
-    <div class="card card-main-content">
-        <div class="card-body p-4 p-lg-5">
+    <div class="card card-main-content border-0">
+        <div class="card-body p-3 p-sm-4 p-lg-5">
             
-            {{-- Search and Add User Bar --}}
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-                <form action="{{ route('user.management') }}" method="GET" class="d-flex w-100 w-md-50 mb-3 mb-md-0">
-                    <input type="text" name="search" class="form-control" placeholder="Search by name or email" value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-outline-secondary ms-2">Search</button>
+        
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-3 mb-md-4 gap-2">
+                <form action="{{ route('user.management') }}" method="GET" class="d-flex w-100 w-md-50">
+                    <input type="text" name="search" class="form-control form-control-sm form-control-md-normal me-2" placeholder="Search by name or email" value="{{ request('search') }}">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm btn-md-normal">Search</button>
                 </form>
 
-            </div>
-                <a href="{{ route('user.create') }}" class="btn text-white" style="background-color: var(--color-primary);">
+                <a href="{{ route('user.create') }}" class="btn btn-primary btn-sm btn-md-normal text-white px-3 fw-bold" style="background-color: var(--color-secondary); border-color: var(--color-primary);">
                     <i class="fas fa-user-plus me-2"></i>Add New User
                 </a>
-               <!-- <a href="{{ route('user.create') }}" class="btn text-white" style="background-color: var(--color-primary);">
-                    <i class="fas fa-user-plus me-2"></i>Add New User
-                </a>-->
             </div>
+
+            </div>
+            
+            <!-- unnecessary -->
 
             <div class="table-responsive">
                 <table class="table modern-table align-middle">
@@ -124,7 +158,7 @@
                                 <td>
                                     @php
                                         $roleColor = match(strtolower($user->role)) {
-                                            'admin' => 'var(--color-primary)',
+                                            'admin' => 'var(--color-admin)',
                                             'checker' => 'var(--color-secondary)',
                                             'driver' => 'var(--color-info)',
                                             default => 'var(--color-inactive)',
@@ -136,21 +170,23 @@
                                 </td>
                                 <td>{{ $user->warehouse->name ?? '-' }}</td>
                                 <td>
-                                    <a href="{{ route('user.edit', $user->id) }}" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </button>
-                                    </form>
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-edit"></i> <span class="d-none d-md-inline ms-1">Edit</span>
+                                        </a>
+                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline ms-1">Delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center p-5">
+                                <td colspan="5" class="text-center p-4 p-md-5">
                                     <p class="mb-0 text-muted">No users found.</p>
                                 </td>
                             </tr>
@@ -161,7 +197,7 @@
             
             {{-- Pagination --}}
             @if ($users->hasPages())
-                <div class="d-flex justify-content-center mt-4">
+                <div class="d-flex justify-content-center mt-3 mt-md-4">
                     {{-- FIXED: Using Bootstrap 5 for pagination styling --}}
                     {{ $users->appends(request()->query())->links('pagination::bootstrap-5') }}
                 </div>

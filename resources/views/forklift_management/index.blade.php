@@ -6,7 +6,7 @@
 
 <style>
     :root {
-        --color-primary: #E60012;
+        --color-primary: #ffffff;
         --color-secondary: #004B8D;
         --color-success: #198754;      
         --color-info: #0086BF;         
@@ -20,6 +20,7 @@
     body {
         background-color: var(--color-background);
         color: #212529;
+        font-size: clamp(0.875rem, 1.5vw, 1rem);
     }
     .card-main-content {
         background-color: #ffffff;
@@ -28,20 +29,36 @@
         border-radius: var(--border-radius-md);
     }
 
+    /* Modern Table Styling */
     .modern-table {
         border-collapse: separate;
-        border-spacing: 0 0.75rem;
-        font-size: 1rem;
+        border-spacing: 0 0.5rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    @media (min-width: 768px) {
+        .modern-table {
+            border-spacing: 0 0.75rem;
+            font-size: 1rem;
+        }
     }
 
     .modern-table thead th {
         border: 0;
         color: #6c757d;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         padding-top: 0;
     }
+
+    @media (min-width: 768px) {
+        .modern-table thead th {
+            font-size: 0.85rem;
+        }
+    }
+
     .modern-table tbody tr {
         background-color: #fff;
         border-radius: var(--border-radius-md);
@@ -56,43 +73,57 @@
         position: relative;
     }
     .modern-table tbody td {
-        padding: 1rem 1.5rem;
         vertical-align: middle;
         border: 0;
     }
+
+    @media (min-width: 768px) {
+        .modern-table tbody td {
+            padding: 1rem 1.5rem;
+        }
+    }
+
     .modern-table tbody td:first-child { border-top-left-radius: var(--border-radius-md); border-bottom-left-radius: var(--border-radius-md); }
     .modern-table tbody td:last-child { border-top-right-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
 
     .status-badge {
-        padding: 0.4em 1em;
-        font-size: 0.85rem;
+        padding: 0.3em 0.8em;
+        font-size: 0.75rem;
         font-weight: 700;
         border-radius: 50rem;
         color: #fff;
+        display: inline-block;
+    }
+
+    @media (min-width: 768px) {
+        .status-badge {
+            padding: 0.4em 1em;
+            font-size: 0.85rem;
+        }
     }
 </style>
 
-<div class="container-fluid py-4 px-lg-4">
+<div class="container-fluid py-3 py-md-4 px-2 px-md-4">
     
     {{-- Main Header --}}
-    <div class="text-center mb-4">
-        <h1 class="display-5 fw-bolder" style="color: var(--color-primary);">
+    <div class="text-center mb-3 mb-md-4">
+        <h1 class="fw-bolder fs-3 fs-md-1" style="color: var(--color-secondary);">
             <i class="fas fa-truck-pickup"></i> Forklift Management
         </h1>
-        <p class="text-secondary fs-5 fw-medium">Manage all company forklifts</p>
+        <p class="text-secondary fs-6 fs-md-5 fw-medium mb-0">Manage all company forklifts</p>
     </div>
 
     {{-- Action Buttons --}}
-    <div class="d-flex justify-content-end mb-4">
+    <div class="d-flex justify-content-start justify-content-md-end mb-3 mb-md-4">
         {{-- Assuming the route name is 'forklifts.create' --}}
-        <a href="{{ route('forklifts.create') }}" class="btn text-white" style="background-color: var(--color-primary);">
+        <a href="{{ route('forklifts.create') }}" class="btn btn-primary btn-sm btn-md-normal text-white px-3 fw-bold w-100 w-md-auto" style="background-color: var(--color-primary); border-color: var(--color-primary);">
             <i class="fas fa-plus-circle me-2"></i>Add New Forklift
         </a>    
     </div>
 
     {{-- Main Content Card for Table --}}
-    <div class="card card-main-content">
-        <div class="card-body p-4 p-lg-5">
+    <div class="card card-main-content border-0">
+        <div class="card-body p-3 p-sm-4 p-lg-5">
             <div class="table-responsive">
                 <table class="table modern-table align-middle">
                     <thead class="text-center">
@@ -121,21 +152,23 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('forklifts.edit', $forklift->forklift_id) }}" class="btn btn-outline-secondary btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('forklifts.destroy', $forklift->forklift_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this forklift?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </button>
-                                    </form>
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="{{ route('forklifts.edit', $forklift->forklift_id) }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-edit"></i> <span class="d-none d-md-inline ms-1">Edit</span>
+                                        </a>
+                                        <form action="{{ route('forklifts.destroy', $forklift->forklift_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this forklift?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline ms-1">Delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center p-5">
+                                <td colspan="3" class="text-center p-4 p-md-5">
                                     <p class="mb-0 text-muted">No forklifts found. Please add a new one.</p>
                                 </td>
                             </tr>
@@ -147,8 +180,8 @@
     </div>
 
     {{-- Pagination --}}
-    @if ($forklifts->hasPages())
-    <div class="d-flex justify-content-center mt-4">
+    @if ($forklifts->hasPages())>
+    <div class="d-flex justify-content-center mt-3 mt-md-4">
         {{ $forklifts->links('pagination::bootstrap-5') }}
     </div>
     @endif
