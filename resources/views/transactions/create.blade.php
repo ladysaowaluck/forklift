@@ -12,6 +12,7 @@
             --color-success: #198754;
             --color-background: #f4f6f9;
             --color-border: #e3e6f0;
+            --color-new-item: #B90019;
             --border-radius-md: 0.75rem;
             --box-shadow-subtle: 0 2px 6px rgba(0, 0, 0, 0.04);
         }
@@ -174,7 +175,7 @@
                             {{-- Submit Button --}}
                             <div class="d-grid gap-2 mt-4 mt-md-5">
                                 <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2"
-                                    style="background-color: var(--color-primary); border-color: var(--color-primary);">Create Booking</button>
+                                    style="background-color: var(--color-secondary); border-color: var(--color-primary);">Create Booking</button>
                             </div>
                         </form>
                     </div>

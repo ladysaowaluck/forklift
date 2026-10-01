@@ -6,8 +6,8 @@
 
 <style>
     :root {
-        --color-primary: #004B8D;
-        --color-secondary: #8B0019;
+        --color-primary: #fff;
+        --color-secondary: #004B8D;
         --color-background: #f4f6f9;
         --color-border: #e3e6f0;
         --border-radius-md: 0.75rem;

@@ -9,11 +9,14 @@
         :root {
             --color-primary: #ffffff; 
             --color-secondary: #004B8D;
-            --color-info: #FA7800;
+            --color-info: #7CBA4C;
             --color-success: #198754;
             --color-warning: #ffc107;
             --color-danger: #dc3545;
             --color-background: #f4f6f9;
+            --color-new-item: #B90019;
+            --color-booking: #FA7800;
+            --color-progress:  #0070C0;
             --color-border: #e3e6f0;
             --border-radius-md: 0.75rem;
             --box-shadow-subtle: 0 2px 6px rgba(0, 0, 0, 0.04);
@@ -67,7 +70,6 @@
             border-radius: var(--border-radius-md);
         }
 
-        /* Modern Table styling for Desktop */
         .modern-table {
             border-collapse: separate;
             border-spacing: 0 0.75rem;
@@ -123,7 +125,6 @@
             display: inline-block;
         }
 
-        /* Responsive Floating Action Button (FAB) */
         .fab {
             position: fixed;
             bottom: 20px;
@@ -131,7 +132,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: var(--color-secondary);
+            background-color: var(--color-new-item);
             color: white;
             display: flex;
             align-items: center;
@@ -213,7 +214,8 @@
         {{-- Page Header --}}
         <div class="text-center mb-4 mb-md-5">
             <h1 class="fs-3 fs-md-1 fw-bolder mb-1" style="color: var(--color-secondary);">
-                <i class="fas fa-truck-moving me-2"></i>Transportation Dashboard
+                <img src="{{ asset('images/forklift.png') }}" alt="Boxes Icon" class="me-2" style="width: 50px; height: auto;">
+                Transportation Dashboard
             </h1>
             <p class="text-secondary fs-6 fw-medium mb-0">Real-time status of all booking transactions</p>
         </div>
@@ -340,16 +342,16 @@
                             <input type="hidden" name="warehouse_to" value="{{ request('warehouse_to') }}">
                             <input type="hidden" name="status" value="{{ request('status') }}">
                             <input type="hidden" name="driver_rating" value="{{ request('driver_rating') }}">
-                            <button type="submit" class="btn btn-success btn-sm btn-md-normal w-100 w-md-auto">
+                            <button type="submit" class="btn btn-success btn-sm btn-md-normal w-md-auto">
                                 <i class="fas fa-file-excel me-2"></i>Export to Excel
                             </button>
                         </form>
                     @endif
                 </div>
 
-                {{-- Data Table --}}
-                <div class="table-responsive-md">
-                    <table class="table modern-table align-middle">
+                <!-- Data Table / Card View -->
+                <div class="transaction-container">
+                    <table class="table modern-table align-middle d-none d-md-table">
                         <thead class="text-center">
                             <tr>
                                 <th class="text-start">Created By & Driver</th>
@@ -362,8 +364,20 @@
 
                         <tbody>
                             @forelse($transactions as $transaction)
+                                @php
+                                    $statusColor = match ($transaction->status) {
+                                        'Assigned' => 'var(--color-booking)',
+                                        'In Progress' => 'var(--color-progress)',
+                                        'Arrived' => 'var(--color-info)',
+                                        'Completed' => 'var(--color-success)',
+                                        'Rejected' => 'var(--color-danger)',
+                                        default => '#6c757d',
+                                    };
+                                @endphp
+
+                                <!-- DESKTOP VIEW (Table Row) -->
                                 <tr>
-                                    {{-- Created By & Driver --}}
+                                    <!-- Created By & Driver -->
                                     <td class="text-start">
                                         <a href="{{ route('transactions.show', $transaction->transaction_id) }}" class="text-decoration-none">
                                             <div class="fw-bold text-primary">{{ $transaction->creator->name ?? 'System' }}</div>
@@ -371,42 +385,33 @@
                                         </a>
                                     </td>
 
-                                    {{-- Route --}}
+                                    <!-- Route -->
                                     <td class="text-start">
                                         <div class="d-flex align-items-center">
                                             <span class="fw-bold">{{ $transaction->warehouseFrom->name ?? 'N/A' }}</span>
-                                            <span class="mx-2 text-muted fs-5">&#10132;</span>
+                                            <i class="fas fa-arrow-right mx-2 text-muted small"></i>
                                             <span class="fw-bold">{{ $transaction->warehouseTo->name ?? 'N/A' }}</span>
                                         </div>
                                     </td>
 
-                                    {{-- Date/Time --}}
-                                    <td class="text-md-center">
-                                        <span class="small text-muted d-md-none">Booked: </span>
-                                        {{ $transaction->created_at 
-                                            ? $transaction->created_at->timezone('Asia/Bangkok')->format('d M Y H:i') 
-                                            : '-' }}
+                                    <!-- Date/Time -->
+                                    <td class="text-center">
+                                        <span class="small text-muted">
+                                            {{ $transaction->created_at 
+                                                ? $transaction->created_at->timezone('Asia/Bangkok')->format('d M Y H:i') 
+                                                : '-' }}
+                                        </span>
                                     </td>
 
-                                    {{-- Status Badge --}}
-                                    <td class="text-md-center">
-                                        @php
-                                            $statusColor = match ($transaction->status) {
-                                                'Assigned' => 'var(--color-primary)',
-                                                'In Progress' => 'var(--color-secondary)',
-                                                'Arrived' => 'var(--color-info)',
-                                                'Completed' => 'var(--color-success)',
-                                                'Rejected' => 'var(--color-danger)',
-                                                default => '#6c757d',
-                                            };
-                                        @endphp
+                                    <!-- Status Badge -->
+                                    <td class="text-center">
                                         <span class="status-badge" style="background-color: {{ $statusColor }};">
                                             {{ $transaction->status }}
                                         </span>
                                     </td>
 
-                                    {{-- Feedback / Reason --}}
-                                    <td class="text-md-center">
+                                    <!-- Feedback / Reason  -->
+                                    <td class="text-center">
                                         @if($transaction->driver_rating)
                                             <div class="rating-stars" title="{{ $transaction->driver_rating }} stars">
                                                 @for ($i = 1; $i <= 5; $i++)
@@ -431,21 +436,106 @@
                                                 By: {{ $transaction->rejectedBy->name ?? 'Driver' }}
                                             </div>
                                         @else
-                                            <span class="text-muted d-none d-md-inline">-</span>
+                                            <span class="text-muted">-</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center p-4 p-md-5">
-                                        <i class="fas fa-box-open fa-2x fa-md-3x text-muted mb-2 mb-md-3"></i>
-                                        <p class="mb-0 fs-6 fs-md-5 text-muted">No transactions found.</p>
+                                    <td colspan="5" class="text-center p-5">
+                                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                        <p class="mb-0 fs-5 text-muted">No transactions found.</p>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
+
+                    <!-- MOBILE VIEW (Card Layout) Added mobile-only container with d-md-none to render structured cards on small screens -->
+                    <div class="d-md-none">
+                        @forelse($transactions as $transaction)
+                            @php
+                                $statusColor = match ($transaction->status) {
+                                    'Assigned' => 'var(--color-booking)',
+                                    'In Progress' => 'var(--color-progress)',
+                                    'Arrived' => 'var(--color-info)',
+                                    'Completed' => 'var(--color-success)',
+                                    'Rejected' => 'var(--color-danger)',
+                                    default => '#6c757d',
+                                };
+                            @endphp
+
+                            <div class="card mb-3 border shadow-sm rounded-3">
+                                <div class="card-body p-3">
+                                    <!-- Card Header: Creator/Driver & Status -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <a href="{{ route('transactions.show', $transaction->transaction_id) }}" class="text-decoration-none">
+                                            <div class="fw-bold text-primary fs-6">{{ $transaction->creator->name ?? 'System' }}</div>
+                                            <div class="small text-muted">Driver: {{ $transaction->driver->name ?? 'Unassigned' }}</div>
+                                        </a>
+                                        <span class="status-badge small" style="background-color: {{ $statusColor }}; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                            {{ $transaction->status }}
+                                        </span>
+                                    </div>
+
+                                    <hr class="my-2 opacity-25">
+
+                                    <!-- Route Details -->
+                                    <div class="d-flex align-items-center mb-2 small fw-bold text-dark">
+                                        <span>{{ $transaction->warehouseFrom->name ?? 'N/A' }}</span>
+                                        <i class="fas fa-arrow-right mx-2 text-muted"></i>
+                                        <span>{{ $transaction->warehouseTo->name ?? 'N/A' }}</span>
+                                    </div>
+
+                                    {{-- Date & Time --}}
+                                    <div class="small text-muted mb-2">
+                                        <i class="far fa-clock me-1"></i>
+                                        {{ $transaction->created_at 
+                                            ? $transaction->created_at->timezone('Asia/Bangkok')->format('d M Y H:i') 
+                                            : '-' }}
+                                    </div>
+
+                                    {{-- Feedback / Rejection Info --}}
+                                    @if($transaction->driver_rating || $transaction->status == 'Rejected')
+                                        <div class="bg-light p-2 rounded mt-2">
+                                            @if($transaction->driver_rating)
+                                                <div class="rating-stars small d-flex align-items-center">
+                                                    <span class="me-2 text-muted">Rating:</span>
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i class="fas fa-star {{ $i <= $transaction->driver_rating ? '' : 'text-muted opacity-25' }}"></i>
+                                                    @endfor
+                                                </div>
+                                                @if($transaction->driver_comment)
+                                                    <p class="small text-muted fst-italic mb-0 mt-1">
+                                                        "{{ Str::limit($transaction->driver_comment, 40) }}"
+                                                    </p>
+                                                @endif
+                                            @elseif($transaction->status == 'Rejected')
+                                                <div class="text-danger fw-bold small">
+                                                    <i class="fas fa-exclamation-circle me-1"></i>Rejected
+                                                </div>
+                                                @if($transaction->rejection_reason)
+                                                    <p class="small text-muted fst-italic mb-0 mt-1">
+                                                        "{{ Str::limit($transaction->rejection_reason, 40) }}"
+                                                    </p>
+                                                @endif
+                                                <div class="small text-muted mt-1" style="font-size: 0.7rem;">
+                                                    By: {{ $transaction->rejectedBy->name ?? 'Driver' }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center p-4 border rounded bg-light">
+                                <i class="fas fa-box-open fa-2x text-muted mb-2"></i>
+                                <p class="mb-0 small text-muted">No transactions found.</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
+
 
                 {{-- Pagination Links --}}
                 @if ($transactions->hasPages())
@@ -461,7 +551,7 @@
 
     {{-- Floating Action Button --}}
     @if(in_array(auth()->user()->role, ['admin', 'user', 'checker']))
-        <a href="{{ route('transactions.create') }}" class="fab" title="Create New Booking">
+        <a href="{{ route('transactions.create') }}" class="fab" title="Create New Booking" > 
             <i class="fas fa-plus"></i>
         </a>
     @endif

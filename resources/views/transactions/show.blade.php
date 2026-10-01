@@ -6,9 +6,7 @@
 
     <style>
         :root {
-            /* Gemini: Fix syntax typo 'ff--color-primary' -> '--color-primary' */
             --color-primary: #ffffff;
-            /* --color-primary: #004B8D; */
             --color-secondary: #004B8D;
             --color-info: #FA7800;
             --color-success: #198754;
@@ -78,7 +76,6 @@
             background-color: var(--color-secondary);
             color: white;
             transition: background-color 0.2s;
-            /* Gemini: Ensure full-width display on mobile for better touch target */
             display: inline-block;
             width: 100%;
             text-align: center;
@@ -139,7 +136,6 @@
             z-index: -1;
         }
 
-        /* Gemini: Additional responsive enhancements for mobile devices */
         @media (max-width: 576px) {
             .card-main-content .card-body {
                 padding: 1.25rem !important;
@@ -151,24 +147,17 @@
         }
     </style>
 
-    {{-- Gemini: Adjusted container padding for mobile view --}}
-    {{-- <div class="container-fluid py-4 px-lg-4"> - unnecessary - Gemini Lady --}}
     <div class="container-fluid py-2 py-md-4 px-2 px-lg-4">
         <div class="card card-main-content">
-            {{-- Gemini: Scaled down card body padding for small screens --}}
-            {{-- <div class="card-body p-4 p-lg-5"> - unnecessary - Gemini Lady --}}
             <div class="card-body p-3 p-md-4 p-lg-5">
                 {{-- Header and Booking Info --}}
                 <div class="text-center mb-3 mb-md-4">
-                    {{-- Gemini: Made header font responsive --}}
-                    {{-- <h1 class="fw-bolder" style="color: var(--color-secondary);">Booking Details</h1> - unnecessary - Gemini Lady --}}
                     <h2 class="fw-bolder h3-md display-6-lg" style="color: var(--color-secondary);">Booking Details</h2>
                     <p class="fs-6 fs-md-5 text-muted mb-0">Transaction ID: #{{ $transaction->transaction_id }}</p>
                 </div>
                 <hr class="my-3 my-md-4">
 
-                {{-- Gemini: Removed rigid fs-5 from row to allow flexible responsive font sizes --}}
-                {{-- <div class="row g-4 fs-5 mb-5"> - unnecessary - Gemini Lady --}}
+                
                 <div class="row g-3 g-md-4 mb-4 mb-md-5 fs-6 fs-md-5">
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
@@ -247,8 +236,6 @@
                         default => '#6c757d',
                     };
                 @endphp
-                {{-- Gemini: Scaled progress bar height for mobile screens --}}
-                {{-- <div class="progress" style="height: 30px; font-size: 1rem;"> - unnecessary - Gemini Lady --}}
                 <div class="progress" style="height: 24px; font-size: 0.875rem;">
                     <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
                         role="progressbar" style="width: 0%; background-color: {{ $statusColor }};" aria-valuenow="0"
@@ -257,8 +244,6 @@
                     </div>
                 </div>
 
-                {{-- Gemini: Adjusted container margins and flexible wrapping --}}
-                {{-- <div class="text-center my-5 d-flex flex-wrap justify-content-center gap-3"> - unnecessary - Gemini Lady --}}
                 <div class="text-center my-4 my-md-5 d-flex flex-column flex-sm-row flex-wrap justify-content-center gap-2 gap-sm-3">
                     {{-- Form for Driver to Claim an unassigned task --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'Pending' && $transaction->driver_id == null)
@@ -270,8 +255,6 @@
                                 @csrf
                                 <div class="form-group mb-3 text-start">
                                     <label for="forklift_id" class="form-label small">Select Forklift</label>
-                                    {{-- Gemini: Mobile responsive select size --}}
-                                    {{-- <select name="forklift_id" class="form-select form-select-lg" required> - unnecessary - Gemini Lady --}}
                                     <select name="forklift_id" class="form-select" required>
                                         <option value="" disabled selected>-- Your available forklifts --</option>
                                         @foreach ($forklifts as $forklift)
@@ -279,16 +262,11 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                {{-- Gemini: Stacking buttons vertically on small devices --}}
-                                {{-- <div class="d-flex gap-2 justify-content-center"> - unnecessary - Gemini Lady --}}
                                 <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                                    {{-- Gemini: Adapted btn sizes for touch screens --}}
-                                    {{-- <button type="submit" class="btn btn-lg text-white" style="background-color: var(--color-primary);"> - unnecessary - Gemini Lady --}}
                                     <button type="submit" class="btn text-white w-100 w-sm-auto"
                                         style="background-color: var(--color-primary);">
                                         <i class="fas fa-hand-paper me-2"></i>Claim Task
                                     </button>
-                                    {{-- <button type="button" class="btn btn-lg btn-outline-danger" data-bs-toggle="modal" data-bs-target="#rejectTaskModal"> - unnecessary - Gemini Lady --}}
                                     <button type="button" class="btn btn-outline-danger w-100 w-sm-auto" data-bs-toggle="modal"
                                         data-bs-target="#rejectTaskModal">
                                         <i class="fas fa-times me-2"></i>Reject Task
@@ -302,8 +280,6 @@
 
                     {{-- "Start Task" and "Reject" buttons for Assigned Driver --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'Assigned' && $transaction->driver && $transaction->driver->user_id == auth()->user()->id)
-                        {{-- Gemini: Scaled down oversized btn-lg on mobile --}}
-                        {{-- <button type="button" class="btn btn-lg text-white" style="background-color: var(--color-primary);" ...> - unnecessary - Gemini Lady --}}
                         <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-primary);"
                             data-bs-toggle="modal" data-bs-target="#startTaskModal">
                             <i class="fas fa-play me-2"></i>Start Task
@@ -384,7 +360,6 @@
                 {{-- Booking Items Table and Footer Buttons --}}
                 <h5 class="fw-bold mt-4 mt-md-5">Booking Items</h5>
                 <div class="table-responsive">
-                    {{-- Gemini: Added small text class on table for small screens --}}
                     <table class="table table-hover align-middle small">
                         <thead class="table-light">
                             <tr>
@@ -407,8 +382,6 @@
                     </table>
                 </div>
                 <hr class="my-3 my-md-4">
-                {{-- Gemini: Stacked footer action buttons vertically on mobile --}}
-                {{-- <div class="d-flex justify-content-between mt-4"> - unnecessary - Gemini Lady --}}
                 <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-3 mt-md-4">
                     <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary w-100 w-sm-auto">
                         <i class="fas fa-arrow-left me-2"></i>Back to List
