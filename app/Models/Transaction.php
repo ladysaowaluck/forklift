@@ -24,7 +24,7 @@ class Transaction extends Model
         'driver_id', 
         'warehouse_from', 
         'warehouse_to', 
-        'created_by_user_id',
+        // 'created_by_user_id',
         'status',
         'driver_rating',
         'driver_comment',
@@ -77,10 +77,10 @@ class Transaction extends Model
         return $this->hasMany(TransactionDetail::class, 'transaction_id');
     }
     
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by_user_id');
-    }
+    // public function creator()
+    // {
+    //     return $this->belongsTo(User::class, 'created_by_user_id');
+    // }
     public function rejectedBy()
     {
         return $this->belongsTo(Driver::class, 'rejected_by_driver_id', 'driver_id');

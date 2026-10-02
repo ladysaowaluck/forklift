@@ -125,7 +125,7 @@ class TransactionController extends Controller
         $transaction = Transaction::create([
             'warehouse_from' => $request->warehouse_from,
             'warehouse_to' => $request->warehouse_to,
-            'created_by_user_id' => auth()->id(),
+            // 'created_by_user_id' => auth()->id(),
             'status' => 'Pending', 
         ]);
         

@@ -75,7 +75,7 @@
 
                         {{-- Submit Button --}}
                         <div class="d-grid gap-2 mt-3 mt-md-4">
-                            <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2" style="background-color: var(--color-primary); border-color: var(--color-primary);">
+                            <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2" style="background-color: var(--color-secondary); border-color: var(--color-primary);">
                                 <i class="fas fa-plus-circle me-2"></i>{{ __('Create Forklift') }}
                             </button>
                         </div>

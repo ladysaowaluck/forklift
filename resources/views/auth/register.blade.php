@@ -120,7 +120,7 @@
                     {{-- Register Button --}}
                     <div class="d-grid mt-3 mt-md-4">=
                         <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2"
-                            style="background-color: var(--color-primary); border-color: var(--color-primary);">
+                            style="background-color: var(--color-secondary); border-color: var(--color-primary);">
                             <i class="fas fa-user-plus me-2"></i>Register
                         </button>
                     </div>
