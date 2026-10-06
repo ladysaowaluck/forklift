@@ -20,9 +20,15 @@ class User extends Authenticatable
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'warehouse_id');
     }
 
-        public function driver()
+    public function driver()
     {
 
         return $this->hasOne(Driver::class, 'user_id', 'id');
+    }
+
+    // Helper method to determine if the user has an admin role (case-insensitive)
+    public function isAdmin(): bool
+    {
+        return strtolower($this->role ?? '') === 'admin';
     }
 }

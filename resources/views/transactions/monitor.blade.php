@@ -24,6 +24,7 @@
             --color-border: #30363d;
             --color-text-primary: #c9d1d9;
             --color-text-secondary: #8b949e;
+            --color-arrived: #7CBA4C;
         }
         
         body {
@@ -113,7 +114,7 @@
         .status-Pending { background-color: var(--color-inactive); }
         .status-Assigned { background-color: var(--color-primary); color: #000; }
         .status-In-Progress, .status-In\.Progress { background-color: var(--color-secondary); }
-        .status-Arrived { background-color: var(--color-info); }
+        .status-Arrived { background-color: var(--color-arrived); }
         .status-Completed { background-color: var(--color-success); }
 
         .route-col .from { color: #ff8b8b; }

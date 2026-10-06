@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\ForkliftController;
@@ -18,21 +17,11 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// หน้า dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+// Redirect /dashboard to /transactions to prevent 404 errors for existing bookmarks and legacy links without impacting other pages.
+Route::redirect('/dashboard', '/transactions');
 
-// หน้า login และ register
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::post('/login', function (Request $request) {
-    $credentials = $request->only('email', 'password');
-    if (Auth::attempt($credentials)) {
-        return redirect()->intended('/transactions');
-    }
-    return back()->with('error', 'Invalid credentials!');
-})->name('login.submit');
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.submit');
 
 // เปลี่ยนการลงทะเบียนมาใช้ RegisterController
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');

@@ -9,10 +9,12 @@
             --color-primary: #ffffff;
             --color-secondary: #004B8D;
             --color-info: #FA7800;
+            --color-arrived: #7CBA4C;
             --color-success: #198754;
             --color-danger: #dc3545;
             --color-background: #f4f6f9;
             --color-border: #e3e6f0;
+            --color-assigned: #FFC107;
             --border-radius-md: 0.75rem;
         }
 
@@ -228,9 +230,9 @@
                 <h5 class="fw-bold text-center mb-3">Status Tracker</h5>
                 @php
                     $statusColor = match ($transaction->status) {
-                        'Assigned' => 'var(--color-primary)',
+                        'Assigned' => 'var(--color-assigned)',
                         'In Progress' => 'var(--color-secondary)',
-                        'Arrived' => 'var(--color-info)',
+                        'Arrived' => 'var(--color-arrived)',
                         'Completed' => 'var(--color-success)',
                         'Rejected' => 'var(--color-danger)',
                         default => '#6c757d',
@@ -264,7 +266,7 @@
                                 </div>
                                 <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
                                     <button type="submit" class="btn text-white w-100 w-sm-auto"
-                                        style="background-color: var(--color-primary);">
+                                        style="background-color: var(--color-secondary);">
                                         <i class="fas fa-hand-paper me-2"></i>Claim Task
                                     </button>
                                     <button type="button" class="btn btn-outline-danger w-100 w-sm-auto" data-bs-toggle="modal"
@@ -280,7 +282,7 @@
 
                     {{-- "Start Task" and "Reject" buttons for Assigned Driver --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'Assigned' && $transaction->driver && $transaction->driver->user_id == auth()->user()->id)
-                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-primary);"
+                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-secondary);"
                             data-bs-toggle="modal" data-bs-target="#startTaskModal">
                             <i class="fas fa-play me-2"></i>Start Task
                         </button>
@@ -292,7 +294,7 @@
 
                     {{-- "Mark as Arrived" button --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'In Progress' && $transaction->driver && $transaction->driver->user_id == auth()->user()->id)
-                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-primary);"
+                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-secondary);"
                             data-bs-toggle="modal" data-bs-target="#arriveTaskModal">
                             <i class="fas fa-map-marker-alt me-2"></i>Mark as Arrived
                         </button>
@@ -300,7 +302,7 @@
 
                     {{-- "Confirm & Rate" button --}}
                     @if(auth()->user()->role == 'checker' && $transaction->status == 'Arrived')
-                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-primary);"
+                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-secondary);"
                             data-bs-toggle="modal" data-bs-target="#ratingModal">
                             <i class="fas fa-clipboard-check me-2"></i>Confirm & Rate Driver
                         </button>
@@ -450,7 +452,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn text-white" style="background-color: var(--color-primary);">Confirm
+                        <button type="submit" class="btn text-white" style="background-color: var(--color-secondary);">Confirm
                             & Start</button>
                     </div>
                 </form>
@@ -511,7 +513,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn text-white" style="background-color: var(--color-primary);">Confirm
+                        <button type="submit" class="btn text-white" style="background-color: var(--color-secondary);">Confirm
                             Arrival</button>
                     </div>
                 </form>
@@ -574,7 +576,7 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn text-white" style="background-color: var(--color-primary);">Submit
+                    <button type="submit" class="btn text-white" style="background-color: var(--color-sec);">Submit
                         Rating</button>
                 </div>
             </form>

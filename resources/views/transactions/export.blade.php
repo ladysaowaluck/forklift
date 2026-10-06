@@ -2,16 +2,13 @@
 
 @section('content')
 <div class="container py-3 px-2 px-md-4">
-    {{-- Lady: <h2 class="my-4 text-center text-gradient fw-bold" style="font-size: 2.5rem; letter-spacing: 2px;"> --}}
-    {{-- Gemini: Replaced hardcoded font-size with responsive typography classes --}}
+    <!-- <h2 class="my-4 text-center text-gradient fw-bold" style="font-size: 2.5rem; letter-spacing: 2px;"> -->
     <h2 class="my-3 my-md-4 text-center text-gradient fw-bold fs-3 fs-md-2" style="letter-spacing: 1px;">
         <i class="fas fa-truck"></i> Export Transportation Transactions
     </h2>
 
     <!-- Export Button -->
     <div class="d-flex justify-content-start mb-3">
-        {{-- Lady: <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#exportModal"> --}}
-        {{-- Gemini: Added w-100 on small screens and w-auto on medium screens --}}
         <button class="btn btn-success w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#exportModal">
             <i class="fas fa-file-excel me-1"></i> Export to Excel
         </button>
@@ -19,8 +16,6 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
-        {{-- Lady: <div class="modal-dialog"> --}}
-        {{-- Gemini: Center modal and make it wider on desktop for side-by-side fields --}}
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -30,7 +25,6 @@
                 <div class="modal-body p-3 p-md-4">
                     <form method="POST" action="{{ route('transactions.export') }}">
                         @csrf
-                        {{-- Gemini: Added Bootstrap grid system to arrange form controls responsively --}}
                         <div class="row row-cols-1 row-cols-md-2 g-3">
                             <div class="col">
                                 <label for="status" class="form-label small fw-semibold">Select Status</label>

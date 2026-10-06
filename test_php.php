@@ -1,416 +1,267 @@
-<?php
+@extends('layouts.app')
+
+@section('content')
+    <div class="login-container d-flex align-items-center justify-content-center min-vh-100 px-3 py-4">
+        <div class="login-card card shadow-lg w-100">
+            <div class="card-body p-4 p-md-5 text-center">
+
+                <img src="{{ asset('images/SNC_logo_black.png') }}" alt="Company Logo" class="login-logo mb-3 mb-md-4">
+
+                <h2 class="login-title fw-bolder mb-1" style="color: var(--color-secondary);">Welcome Back</h2>
+                <p class="text-body-secondary small mb-4">Sign in to continue to the dashboard</p>
+
+                <form method="POST" action="{{ route('login') }}" novalidate>
+                    @csrf
+
+                    {{-- Email Input --}}
+                    <div class="input-group has-validation mb-3">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}"
+                            class="form-control @error('email') is-invalid @enderror" placeholder="Email address"
+                            aria-label="Email address" required autocomplete="email" autofocus>
+                        @error('email')
+                            <div class="invalid-feedback text-start">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="input-group has-validation mb-3">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input id="password" type="password" name="password"
+                            class="form-control @error('password') is-invalid @enderror" placeholder="Password"
+                            aria-label="Password" required autocomplete="current-password">
+                        <button class="btn btn-toggle-pw" type="button" id="togglePassword" aria-label="Show password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        @error('password')
+                            <div class="invalid-feedback text-start">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                        <div class="form-check text-start">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                            <label class="form-check-label small" for="remember">Remember Me</label>
+                        </div>
+                        @if (Route::has('password.request'))
+                            <a class="small text-decoration-none" href="{{ route('password.request') }}"
+                                style="color: var(--color-secondary);">Forgot Password?</a>
+                        @endif
+                    </div>
+
+                    <!-- Login Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-login btn-lg fw-bold">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </div>
+                </form>
 
 
-namespace App\Http\Controllers;
+            </div>
+        </div>
+    </div>
 
+    @if (session('login_error_type'))
+    <div class="modal fade" id="loginErrorModal" tabindex="-1" aria-labelledby="loginErrorModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-use Carbon\Carbon;
-use App\Models\Transaction;
-use App\Models\Forklift;
-use App\Models\Driver;
-use App\Models\Warehouse;
-use App\Models\TransactionDetail;
-use Illuminate\Http\Request;
-use App\Exports\TransactionsExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Storage; // เพิ่มสำหรับการจัดการไฟล์
+                <!-- Header stripe coloured by error type -->
+                <div class="modal-header border-0 pb-0
+                    {{ session('login_error_type') === 'user_not_found' ? 'bg-warning-subtle' : 'bg-danger-subtle' }}">
+                    <div class="w-100 text-center pt-3">
+                        <div class="error-icon-wrap mb-2">
+                            @if (session('login_error_type') === 'user_not_found')
+                                <i class="fas fa-user-slash fa-2x text-warning"></i>
+                            @else
+                                <i class="fas fa-lock fa-2x text-danger"></i>
+                            @endif
+                        </div>
+                        <h5 class="modal-title fw-bold" id="loginErrorModalLabel">
+                            @if (session('login_error_type') === 'user_not_found')
+                                User Not Found
+                            @else
+                                Incorrect Password
+                            @endif
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
+                <div class="modal-body text-center px-4 py-3">
+                    <p class="text-body-secondary mb-0">
+                        {{ session('login_error_message') }}
+                    </p>
+                </div>
 
-class TransactionController extends Controller
-{
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-login px-4 fw-bold" data-bs-dismiss="modal">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const input = document.getElementById('password');
+            const icon = this.querySelector('i');
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', !show);
+            icon.classList.toggle('fa-eye-slash', show);
+            this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+    </script>
 
-    public function export(Request $request)
-    {
-        $filters = $request->only([
-            'forklift_id', 
-            'driver_id', 
-            'warehouse_from', 
-            'warehouse_to', 
-            'status',
-            'driver_rating' 
-        ]);
-    
-        return Excel::download(new TransactionsExport($filters), 'transactions_report.xlsx');
-    }
+    <!-- Auto-trigger the error modal on page load if a login error was flashed. -->
+    @if (session('login_error_type'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var loginErrorModal = new bootstrap.Modal(
+                document.getElementById('loginErrorModal'),
+                { backdrop: 'static', keyboard: false }
+            );
+            loginErrorModal.show();
+        });
+    </script>
+    @endif
 
-
-    public function index(Request $request)
-    {
-        $forklifts = Forklift::all();
-        $drivers = Driver::all();
-        $warehouses = Warehouse::all();
-
-
-        $query = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo']);
-        $query->where('status', '!=', 'Deleted');
-
-
-
-
-        if ($request->filled('forklift_id')) {
-            $query->where('forklift_id', (int) $request->forklift_id);
+    <style>
+        /* Adding theme colors locally for this standalone page */
+        :root {
+            --color-primary: #8B0019;
+            --color-secondary: #004B8D;
         }
 
-
-        if ($request->filled('driver_id')) {
-            $query->where('driver_id', (int) $request->driver_id);
+        #app>nav.navbar {
+            display: none !important;
         }
 
+        /* #app>nav.navbar {
+                    visibility: hidden;
+                } */
+        /* #app[data-route="login"]>nav.navbar,
+        body.page-login #app>nav.navbar {
+            display: none !important;
+        } */
 
-        if ($request->filled('warehouse_from')) {
-            $query->where('warehouse_from', (int) $request->warehouse_from);
+        body {
+            background: url('{{ asset('images/siam-nistran.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            font-size: clamp(0.875rem, 1.5vw, 1rem);
         }
 
-
-        if ($request->filled('warehouse_to')) {
-            $query->where('warehouse_to', (int) $request->warehouse_to);
+        .login-card {
+            max-width: 420px;
+            border: 0;
+            border-radius: 1rem;
         }
 
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        .login-logo {
+            display: block;
+            width: 100%;
+            max-width: 229px;
+            /* size on mobile */
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-
-        if ($request->filled('driver_rating')) {
-            $query->where('driver_rating', (int) $request->driver_rating);
-        }
-
-
-        if (auth()->user()->role == 'driver') {
-            $driver = Driver::where('user_id', auth()->id())->first();
-
-
-            if ($driver) {
-                $query->where(function ($subQuery) use ($driver) {
-                    $subQuery->where('driver_id', $driver->driver_id)
-                            ->orWhere('status', 'Pending');
-                });
-            } else {
-                $query->where('status', 'Pending');
+        @media (min-width: 768px) {
+            .login-logo {
+                max-width: 248px;
             }
         }
 
-
-        if (auth()->user()->role == 'driver') {
-            $query->orderByRaw("CASE WHEN status = 'Pending' THEN 1 ELSE 2 END ASC")
-                ->orderBy('created_at', 'ASC');
-            
-            $transactions = $query->paginate(10);
-        } else {
-            $transactions = $query->latest()->paginate(10);
+        .login-title {
+            font-size: clamp(1.4rem, 5vw, 1.75rem);
         }
 
-
-        // ส่วนของการนับจำนวนเพื่อใช้ใน Dashboard
-        $pendingCount = Transaction::where('status', 'Pending')->count();
-        $assignedCount = Transaction::where('status', 'Assigned')->count();
-        $inProgressCount = Transaction::where('status', 'In Progress')->count();
-        $arrivedCount = Transaction::where('status', 'Arrived')->count();
-        $completedCount = Transaction::where('status', 'Completed')->count();
-        $rejectedCount = Transaction::where('status', 'Rejected')->count(); 
-        $totalTransactions = Transaction::where('status', '!=', 'Deleted')->count();
-        
-        return view('transactions.index', compact(
-            'forklifts', 'drivers', 'warehouses', 'transactions','pendingCount',
-            'assignedCount', 'inProgressCount', 'arrivedCount',
-            'completedCount', 'rejectedCount', 'totalTransactions'
-        ));
-    }
-        
-    public function create()
-    {
-        $forklifts = Forklift::all();
-        $drivers = Driver::all();
-        $warehouses = Warehouse::all();
-        return view('transactions.create', compact('forklifts', 'drivers', 'warehouses'));
-    }
-
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'warehouse_from' => 'required|exists:warehouses,warehouse_id',
-            'warehouse_to' => 'required|exists:warehouses,warehouse_id',
-            'details' => 'required|array',
-            'details.*.item_name' => 'required|string',
-            'details.*.quantity' => 'required|integer',
-            'details.*.unit' => 'required|string',
-            'details.*.description' => 'nullable|string',
-        ]);
-        
-        $transaction = Transaction::create([
-            'warehouse_from' => $request->warehouse_from,
-            'warehouse_to' => $request->warehouse_to,
-            'created_by_user_id' => auth()->id(),
-            'status' => 'Pending', 
-        ]);
-        
-        foreach ($request->details as $detail) {
-            $transaction->details()->create($detail);
-        }
-        
-        return redirect()->route('transactions.index')->with('success', 'Transaction created successfully!');
-    }
-
-
-    public function show($id)
-    {
-        $forklifts = Forklift::all();
-        $transaction = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo', 'details'])->findOrFail($id);
-        return view('transactions.show', compact('transaction', 'forklifts'));
-    }
-    
-    public function edit($transaction_id)
-    {
-        $transaction = Transaction::findOrFail($transaction_id);
-        $forklifts = Forklift::all();
-        $drivers = Driver::all();
-        $warehouses = Warehouse::all();
-        return view('transactions.edit', compact('transaction', 'forklifts', 'drivers', 'warehouses'));
-    }
-    
-    public function update(Request $request, $transaction_id)
-    {
-        $request->validate([
-            'forklift_id' => 'required|exists:forklifts,forklift_id',
-            'driver_id' => 'required|exists:drivers,driver_id',
-            'warehouse_from' => 'required|exists:warehouses,warehouse_id',
-            'warehouse_to' => 'required|exists:warehouses,warehouse_id',
-            'status' => 'required|in:Pending,Active,Completed',
-        ]);
-
-
-        $transaction = Transaction::findOrFail($transaction_id);
-        $transaction->update($request->all());
-        return redirect()->route('transactions.index')->with('success', 'Updated successfully!');
-    }
-
-
-    public function destroy($transaction_id)
-    {
-        $transaction = Transaction::findOrFail($transaction_id);
-        $transaction->delete();
-        return redirect()->route('transactions.index')->with('success', 'Transaction deleted successfully!');
-    }
-
-
-    public function claimTask(Request $request, $transaction_id)
-    {
-        $user = auth()->user();
-        if (!$user || $user->role !== 'driver') {
-            return redirect()->back()->with('error', 'You are not authorized to claim this task.');
-        }
-        $transaction = Transaction::findOrFail($transaction_id);
-        
-        if ($transaction->status !== 'Pending') {
-            return redirect()->back()->with('error', 'This task is no longer available for claiming.');
+        .login-link {
+            color: var(--color-secondary);
         }
 
-
-        $driver = Driver::where('user_id', $user->id)->firstOrFail();
-        $request->validate(['forklift_id' => 'required|exists:forklifts,forklift_id']);
-        
-        $transaction->update([
-            'driver_id'   => $driver->driver_id, 
-            'status'      => 'Assigned',
-            'forklift_id' => $request->input('forklift_id'),
-            'claimed_at'  => now(),
-        ]);
-        
-        return redirect()->back()->with('success', 'You have successfully claimed this task.');
-    }
-
-
-    public function rejectTask(Request $request, $transactionId)
-    {
-        $transaction = Transaction::findOrFail($transactionId);
-        $user = auth()->user();
-
-
-        if ($user->role !== 'driver') {
-            return redirect()->back()->with('error', 'คุณไม่มีสิทธิ์กดปฏิเสธ');
+        .form-floating>.form-control {
+            height: calc(3rem + 2px);
+            line-height: 1.25;
+            font-size: 0.875rem;
         }
 
-
-        $driver = Driver::where('user_id', $user->id)->first();
-
-
-        if (!$driver) {
-            return redirect()->back()->with('error', 'ไม่พบข้อมูลพนักงานขับรถของคุณ');
+        @media (min-width: 768px) {
+            .form-floating>.form-control {
+                height: calc(3.5rem + 2px);
+                font-size: 1rem;
+            }
         }
 
-
-        $request->validate([
-            'rejection_reason' => 'required|string|max:1000',
-        ]);
-
-
-        $transaction->update([
-            'status' => 'Rejected',
-            'rejection_reason' => $request->rejection_reason,
-            'rejected_at' => now(),
-            'rejected_by_driver_id' => $driver->driver_id,
-        ]);
-
-
-        return redirect()->route('transactions.index')->with('success', 'ปฏิเสธงานเรียบร้อยแล้ว');
-    }
-
-
-    public function acceptTask(Request $request, $transactionId)
-    {
-        $transaction = Transaction::findOrFail($transactionId);
-        
-        if ($transaction->status !== 'Assigned') {
-            return redirect()->route('transactions.show', $transactionId)->with('error', 'Cannot start task: Status is ' . $transaction->status);
+        .form-floating>label {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
         }
 
-
-        $driver = Driver::where('user_id', auth()->id())->firstOrFail();
-        if ($transaction->driver_id != $driver->driver_id) {
-            return redirect()->route('transactions.show', $transactionId)->with('error', 'This task is not assigned to you.');
-        }
-        $request->validate(['start_task_image' => 'required|image|max:5120']);
-        $imagePath = $request->file('start_task_image')->store('start_images', 'public');
-        
-        $transaction->status = 'In Progress';
-        $transaction->start_task_image_path = $imagePath;
-        $transaction->started_at = now();
-        $transaction->save();
-    
-        return redirect()->route('transactions.show', $transactionId)->with('success', 'You have successfully accepted the task.');
-    }
-    
-    public function arrive(Request $request, $transactionId)
-    {
-        $transaction = Transaction::findOrFail($transactionId);
-        
-        if ($transaction->status !== 'In Progress') {
-            return redirect()->route('transactions.show', $transactionId)->with('error', 'Invalid action: Task is ' . $transaction->status);
+        @media (min-width: 768px) {
+            .form-floating>label {
+                padding: 1rem 1.25rem;
+                font-size: 1rem;
+            }
         }
 
-
-        if (auth()->user()->role == 'driver' && $transaction->driver->user_id == auth()->id()) {
-            $request->validate(['end_task_image' => 'required|image|max:5120']);
-            $imagePath = $request->file('end_task_image')->store('end_images', 'public');
-
-
-            $transaction->status = 'Arrived';
-            $transaction->end_task_image_path = $imagePath;
-            $transaction->arrived_at = now();
-            $transaction->save();
-            return redirect()->route('transactions.show', $transactionId)->with('success', 'You have successfully marked the transaction as arrived.');
-        }
-        return redirect()->route('transactions.show', $transactionId)->with('error', 'This action cannot be performed.');
-    }
-
-
-    // ฟังก์ชันใหม่: แก้ไขรูปภาพเริ่มต้นงาน
-    public function updateStartImage(Request $request, $id)
-    {
-        $transaction = Transaction::findOrFail($id);
-        $request->validate(['start_task_image' => 'required|image|max:5120']);
-
-
-        // ลบรูปเก่าออกจาก Storage ถ้ามีอยู่จริง
-        if ($transaction->start_task_image_path) {
-            Storage::disk('public')->delete($transaction->start_task_image_path);
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 0.25rem rgba(230, 0, 18, 0.25);
         }
 
-
-        // บันทึกรูปใหม่
-        $imagePath = $request->file('start_task_image')->store('start_images', 'public');
-        $transaction->update(['start_task_image_path' => $imagePath]);
-
-
-        return redirect()->back()->with('success', 'แก้ไขรูปภาพเริ่มงานเรียบร้อยแล้ว');
-    }
-
-
-    // ฟังก์ชันใหม่: แก้ไขรูปภาพจบงาน (Arrived)
-    public function updateEndImage(Request $request, $id)
-    {
-        $transaction = Transaction::findOrFail($id);
-        $request->validate(['end_task_image' => 'required|image|max:5120']);
-
-
-        // ลบรูปเก่าออกจาก Storage ถ้ามีอยู่จริง
-        if ($transaction->end_task_image_path) {
-            Storage::disk('public')->delete($transaction->end_task_image_path);
+        .input-group-text {
+            min-width: 2.75rem;
+            justify-content: center;
+            color: var(--color-secondary);
+            background-color: var(--bs-tertiary-bg);
         }
 
-
-        // บันทึกรูปใหม่
-        $imagePath = $request->file('end_task_image')->store('end_images', 'public');
-        $transaction->update(['end_task_image_path' => $imagePath]);
-
-
-        return redirect()->back()->with('success', 'แก้ไขรูปภาพจบงานเรียบร้อยแล้ว');
-    }
-    
-    public function markAsComplete(Request $request, $transactionId)
-    {
-        $transaction = Transaction::findOrFail($transactionId);
-
-
-        if ($transaction->status !== 'Arrived') {
-            return redirect()->route('transactions.show', $transactionId)->with('error', 'Invalid action: Task is ' . $transaction->status);
+        .input-group .form-control,
+        .btn-toggle-pw {
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
         }
 
-
-        if (auth()->user()->role == 'checker') {
-            $transaction->status = 'Completed';
-            $transaction->driver_rating = $request->input('driver_rating');
-            $transaction->driver_comment = $request->input('driver_comment');
-            $transaction->completed_at = now();
-            $transaction->save();
-
-
-            return redirect()->route('transactions.show', $transactionId)->with('success', 'Transaction completed and driver rated.');
-        }
-        return redirect()->route('transactions.show', $transactionId)->with('error', 'Unauthorized action or invalid status.');
-    }
-    
-    public function monitor()
-    {
-        return view('transactions.monitor');
-    }
-
-
-    public function getActiveTransactionsApi()
-    {
-        $transactions = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo'])
-            ->latest() 
-            ->take(30)
-            ->get();
-            
-        $transactions->each(function ($transaction) {
-            $transaction->updated_human = Carbon::parse($transaction->updated_at)->diffForHumans();
-            $transaction->updated_raw = $transaction->updated_at->toIso8601String();
-        });
-
-
-        return response()->json($transactions);
-    }
-
-
-    public function softDelete($transaction_id)
-    {
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'UNAUTHORIZED ACTION.');
+        .btn-toggle-pw {
+            color: var(--bs-secondary-color);
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
         }
 
+        .input-group:focus-within .input-group-text {
+            border-color: var(--color-primary);
+        }
 
-        $transaction = Transaction::findOrFail($transaction_id);
-        
-        $transaction->status = 'Deleted'; 
-        
-        $transaction->save(); 
+        .input-group .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-primary) 25%, transparent);
+        }
+
+        /* Button */
+        .btn-login {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+        }
+
+        .btn-login:hover,
+        .btn-login:focus {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+            filter: brightness(1.1);
+        }
+    </style>
+@endsection
 
 
-        return redirect()->route('transactions.index')
-                        ->with('success', "Transaction #{$transaction->transaction_id} has been deleted.");
-    }
-}
+
+

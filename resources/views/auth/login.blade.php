@@ -13,7 +13,7 @@
                 <form method="POST" action="{{ route('login') }}" novalidate>
                     @csrf
 
-                    {{-- Email Input --}}
+                    <!-- {{-- Email Input --}} -->
                     <div class="input-group has-validation mb-3">
                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                         <input id="email" type="email" name="email" value="{{ old('email') }}"
@@ -24,7 +24,7 @@
                         @enderror
                     </div>
 
-                    {{-- Password Input --}}
+                    <!-- {{-- Password Input --}} -->
                     <div class="input-group has-validation mb-3">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                         <input id="password" type="password" name="password"
@@ -38,7 +38,7 @@
                         @enderror
                     </div>
 
-                    {{-- Remember Me & Forgot Password --}}
+                    <!-- {{-- Remember Me & Forgot Password --}} -->
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
                         <div class="form-check text-start">
                             <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -50,7 +50,7 @@
                         @endif
                     </div>
 
-                    {{-- Login Button --}}
+                    <!-- {{-- Login Button --}} -->
                     <div class="d-grid">
                         <button type="submit" class="btn btn-login btn-lg fw-bold">
                             <i class="fas fa-sign-in-alt me-2"></i>Login
@@ -62,6 +62,50 @@
             </div>
         </div>
     </div>
+
+    @if (session('login_error_type'))
+    <div class="modal fade" id="loginErrorModal" tabindex="-1" aria-labelledby="loginErrorModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <!-- Header stripe coloured by error type -->
+                <div class="modal-header border-0 pb-0
+                    {{ session('login_error_type') === 'user_not_found' ? 'bg-warning-subtle' : 'bg-danger-subtle' }}">
+                    <div class="w-100 text-center pt-3">
+                        <div class="error-icon-wrap mb-2">
+                            @if (session('login_error_type') === 'user_not_found')
+                                <i class="fas fa-user-slash fa-2x text-warning"></i>
+                            @else
+                                <i class="fas fa-lock fa-2x text-danger"></i>
+                            @endif
+                        </div>
+                        <h5 class="modal-title fw-bold" id="loginErrorModalLabel">
+                            @if (session('login_error_type') === 'user_not_found')
+                                User Not Found
+                            @else
+                                Incorrect Password
+                            @endif
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body text-center px-4 py-3">
+                    <p class="text-body-secondary mb-0">
+                        {{ session('login_error_message') }}
+                    </p>
+                </div>
+
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-login px-4 fw-bold" data-bs-dismiss="modal">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <script>
         document.getElementById('togglePassword').addEventListener('click', function () {
@@ -75,6 +119,27 @@
         });
     </script>
 
+    @if (session('login_error_type'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var attempts = 0;
+            function triggerModal() {
+                var modalEl = document.getElementById('loginErrorModal');
+                if (!modalEl) return;
+
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    var loginErrorModal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+                    loginErrorModal.show();
+                } else if (attempts < 20) {
+                    attempts++;
+                    setTimeout(triggerModal, 100);
+                }
+            }
+            triggerModal();
+        });
+    </script>
+    @endif
+
     <style>
         /* Adding theme colors locally for this standalone page */
         :root {
@@ -83,8 +148,16 @@
         }
 
         #app>nav.navbar {
-            display: none;
+            display: none !important;
         }
+
+        /* #app>nav.navbar {
+                    visibility: hidden;
+                } */
+        /* #app[data-route="login"]>nav.navbar,
+        body.page-login #app>nav.navbar {
+            display: none !important;
+        } */
 
         body {
             background: url('{{ asset('images/siam-nistran.jpg') }}') no-repeat center center fixed;
@@ -153,45 +226,47 @@
         }
 
         .input-group-text {
-    min-width: 2.75rem;
-    justify-content: center;
-    color: var(--color-secondary);
-    background-color: var(--bs-tertiary-bg);
-}
+            min-width: 2.75rem;
+            justify-content: center;
+            color: var(--color-secondary);
+            background-color: var(--bs-tertiary-bg);
+        }
 
-.input-group .form-control,
-.btn-toggle-pw {
-    padding-top: 0.7rem;
-    padding-bottom: 0.7rem;
-}
+        .input-group .form-control,
+        .btn-toggle-pw {
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+        }
 
-.btn-toggle-pw {
-    color: var(--bs-secondary-color);
-    background-color: var(--bs-body-bg);
-    border: 1px solid var(--bs-border-color);
-}
+        .btn-toggle-pw {
+            color: var(--bs-secondary-color);
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+        }
 
-.input-group:focus-within .input-group-text {
-    border-color: var(--color-primary);
-}
-.input-group .form-control:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-primary) 25%, transparent);
-}
+        .input-group:focus-within .input-group-text {
+            border-color: var(--color-primary);
+        }
 
-/* Button */
-.btn-login {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-    border-radius: 0.6rem;
-}
-.btn-login:hover,
-.btn-login:focus {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-    filter: brightness(1.1);
-}
+        .input-group .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--color-primary) 25%, transparent);
+        }
+
+        /* Button */
+        .btn-login {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+            border-radius: 0.6rem;
+        }
+
+        .btn-login:hover,
+        .btn-login:focus {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+            filter: brightness(1.1);
+        }
     </style>
 @endsection

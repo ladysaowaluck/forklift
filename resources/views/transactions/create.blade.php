@@ -286,7 +286,7 @@
                     itemOptionsHtml += `<option value="${item.replace(/"/g, '&quot;')}">${item}</option>`;
                 });
 
-                // Gemini: Updated dynamic HTML template with responsive grid layout and scaled input sizes
+                // Updated HTMLwith responsive grid layout and scaled input sizes
                 let newDetailHTML = `
                 <button type="button" class="btn-close remove-detail" aria-label="Close" data-id="${detailCount}"></button>
                 <div class="row g-2 g-md-3">

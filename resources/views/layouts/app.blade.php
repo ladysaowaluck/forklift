@@ -339,13 +339,16 @@
             <div class="container-fluid px-3 px-lg-4">
 
                 <div class="d-flex align-items-center">
+                    <!-- Only render mobile navigation toggler for Admin users -->
                     @auth
-                        <!-- Toggler: visible on mobile only -->
-                        <button class="navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
-                            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
-                            aria-label="{{ __('Toggle navigation') }}">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
+                        @if(Auth::user()->isAdmin())
+                            <!-- Toggler: visible on mobile only -->
+                            <button class="navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
+                                aria-label="{{ __('Toggle navigation') }}">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                        @endif
                     @endauth
 
                     <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center m-0"
@@ -391,20 +394,21 @@
             </div>
         </nav>
 
-        <!-- MENU: sidebar on desktop, slide-in drawer on mobile -->
+        <!-- MENU: sidebar on desktop, slide-in drawer on mobile (Admin only) -->
+        <!-- Display sidebar navigation exclusively for Admin users -->
         @auth
-            <div class="offcanvas-lg offcanvas-start app-sidebar" tabindex="-1" id="sidebarMenu" data-bs-theme="dark">
+            @if(Auth::user()->isAdmin())
+                <div class="offcanvas-lg offcanvas-start app-sidebar" tabindex="-1" id="sidebarMenu" data-bs-theme="dark">
 
-                <div class="offcanvas-header">
-                    <!-- <img src="{{ asset('images/SNC_logo_white.png') }}" alt="Company Logo" class="login-logo mb-3 mb-md-4"> -->
-                    <h5 class="offcanvas-title">{{ config('app.name', 'Forklift Tracker') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
-                        aria-label="Close"></button>
-                </div>
+                    <div class="offcanvas-header">
+                        <!-- <img src="{{ asset('images/SNC_logo_white.png') }}" alt="Company Logo" class="login-logo mb-3 mb-md-4"> -->
+                        <h5 class="offcanvas-title">{{ config('app.name', 'Forklift Tracker') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
+                            aria-label="Close"></button>
+                    </div>
 
-                <div class="offcanvas-body p-3">
-                    <ul class="nav nav-pills flex-column gap-1 w-100">
-                        @if(Auth::user()->role == 'admin')
+                    <div class="offcanvas-body p-3">
+                        <ul class="nav nav-pills flex-column gap-1 w-100">
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->is('transactions*') ? 'active' : '' }}"
                                     href="{{ route('transactions.index') }}">
@@ -429,19 +433,19 @@
                                     <i class="fas fa-users fa-fw me-2"></i>{{ __('Users') }}
                                 </a>
                             </li>
-                        @endif
-                    </ul>
-                </div>
+                        </ul>
+                    </div>
 
-                <div class="sidebar-credit mt-auto pt-3 text-center small">
-                    &copy; {{ date('Y') }} updated Nissin HB
-                </div>
+                    <div class="sidebar-credit mt-auto pt-3 text-center small">
+                        &copy; {{ date('Y') }} updated Nissin HB
+                    </div>
 
-            </div>
+                </div>
+            @endif
         @endauth
 
         <!-- PAGE CONTENT -->
-        <main class="@auth app-content @endauth">
+        <main class="{{ Auth::check() && Auth::user()->isAdmin() ? 'app-content' : '' }}">
             @yield('content')
         </main>
     </div>

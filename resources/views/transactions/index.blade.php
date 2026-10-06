@@ -9,7 +9,7 @@
         :root {
             --color-primary: #ffffff; 
             --color-secondary: #004B8D;
-            --color-info: #7CBA4C;
+            --color-arrived: #7CBA4C;
             --color-success: #198754;
             --color-warning: #ffc107;
             --color-danger: #dc3545;
@@ -214,7 +214,7 @@
         {{-- Page Header --}}
         <div class="text-center mb-4 mb-md-5">
             <h1 class="fs-3 fs-md-1 fw-bolder mb-1" style="color: var(--color-secondary);">
-                <img src="{{ asset('images/forklift.png') }}" alt="Boxes Icon" class="me-2" style="width: 50px; height: auto;">
+                <img src="{{ asset('images/forklift.png') }}" alt="Boxes Icon" class="me-2" style="width: 38px; height: auto;">
                 Transportation Dashboard
             </h1>
             <p class="text-secondary fs-6 fw-medium mb-0">Real-time status of all booking transactions</p>
@@ -225,9 +225,9 @@
             @php
                 $kpi_data = [
                     ['title' => 'Pending', 'count' => $pendingCount, 'color' => 'var(--color-warning)'],
-                    ['title' => 'Assigned', 'count' => $assignedCount, 'color' => 'var(--color-primary)'],
+                    ['title' => 'Assigned', 'count' => $assignedCount, 'color' => 'var(--color-booking)'],
                     ['title' => 'In Progress', 'count' => $inProgressCount, 'color' => 'var(--color-secondary)'],
-                    ['title' => 'Arrived', 'count' => $arrivedCount, 'color' => 'var(--color-info)'],
+                    ['title' => 'Arrived', 'count' => $arrivedCount, 'color' => 'var(--color-arrived)'],
                     ['title' => 'Completed', 'count' => $completedCount, 'color' => 'var(--color-success)'],
                     ['title' => 'Rejected', 'count' => $rejectedCount ?? 0, 'color' => 'var(--color-danger)']
                 ];
@@ -368,7 +368,7 @@
                                     $statusColor = match ($transaction->status) {
                                         'Assigned' => 'var(--color-booking)',
                                         'In Progress' => 'var(--color-progress)',
-                                        'Arrived' => 'var(--color-info)',
+                                        'Arrived' => 'var(--color-arrived)',
                                         'Completed' => 'var(--color-success)',
                                         'Rejected' => 'var(--color-danger)',
                                         default => '#6c757d',
@@ -398,7 +398,7 @@
                                     <td class="text-center">
                                         <span class="small text-muted">
                                             {{ $transaction->created_at 
-                                                ? $transaction->created_at->timezone('Asia/Bangkok')->format('d M Y H:i') 
+                                                ? $transaction->created_at->setTimezone('Asia/Bangkok')->format('d M Y H:i') 
                                                 : '-' }}
                                         </span>
                                     </td>
@@ -458,7 +458,7 @@
                                 $statusColor = match ($transaction->status) {
                                     'Assigned' => 'var(--color-booking)',
                                     'In Progress' => 'var(--color-progress)',
-                                    'Arrived' => 'var(--color-info)',
+                                    'Arrived' => 'var(--color-arrived)',
                                     'Completed' => 'var(--color-success)',
                                     'Rejected' => 'var(--color-danger)',
                                     default => '#6c757d',
@@ -491,7 +491,7 @@
                                     <div class="small text-muted mb-2">
                                         <i class="far fa-clock me-1"></i>
                                         {{ $transaction->created_at 
-                                            ? $transaction->created_at->timezone('Asia/Bangkok')->format('d M Y H:i') 
+                                            ? $transaction->created_at->setTimezone('Asia/Bangkok')->format('d M Y H:i') 
                                             : '-' }}
                                     </div>
 
