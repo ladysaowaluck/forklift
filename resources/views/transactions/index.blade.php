@@ -214,7 +214,7 @@
         {{-- Page Header --}}
         <div class="text-center mb-4 mb-md-5">
             <h1 class="fs-3 fs-md-1 fw-bolder mb-1" style="color: var(--color-secondary);">
-                <img src="{{ asset('images/forklift.png') }}" alt="Boxes Icon" class="me-2" style="width: 38px; height: auto;">
+                <img src="{{ asset('images/tracking.png') }}" alt="Boxes Icon" class="me-2" style="width: 38px; height: auto;">
                 Transportation Dashboard
             </h1>
             <p class="text-secondary fs-6 fw-medium mb-0">Real-time status of all booking transactions</p>

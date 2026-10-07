@@ -147,6 +147,12 @@
                 max-height: 180px;
             }
         }
+
+        .table-responsive {
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable;
+        }
     </style>
 
     <div class="container-fluid py-2 py-md-4 px-2 px-lg-4">
@@ -159,13 +165,14 @@
                 </div>
                 <hr class="my-3 my-md-4">
 
-                
+
                 <div class="row g-3 g-md-4 mb-4 mb-md-5 fs-6 fs-md-5">
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
                             <i class="fas fa-calendar-alt fa-fw me-2 text-muted"></i>
                             Booked Date/Time:
-                            <span class="fw-normal d-block d-sm-inline">{{ $transaction->created_at->format('d M Y H:i:s') ?? 'N/A' }}</span>
+                            <span
+                                class="fw-normal d-block d-sm-inline">{{ $transaction->created_at->format('d M Y H:i:s') ?? 'N/A' }}</span>
                         </div>
                     </div>
 
@@ -197,7 +204,8 @@
                         <div class="fw-bold">
                             <i class="fas fa-warehouse fa-fw me-2 text-muted"></i>
                             From:
-                            <span class="fw-normal d-block d-sm-inline">{{ $transaction->warehouseFrom->name ?? 'N/A' }}</span>
+                            <span
+                                class="fw-normal d-block d-sm-inline">{{ $transaction->warehouseFrom->name ?? 'N/A' }}</span>
                         </div>
                     </div>
 
@@ -205,7 +213,8 @@
                         <div class="fw-bold">
                             <i class="fas fa-dolly fa-fw me-2 text-muted"></i>
                             To:
-                            <span class="fw-normal d-block d-sm-inline">{{ $transaction->warehouseTo->name ?? 'N/A' }}</span>
+                            <span
+                                class="fw-normal d-block d-sm-inline">{{ $transaction->warehouseTo->name ?? 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
@@ -246,7 +255,8 @@
                     </div>
                 </div>
 
-                <div class="text-center my-4 my-md-5 d-flex flex-column flex-sm-row flex-wrap justify-content-center gap-2 gap-sm-3">
+                <div
+                    class="text-center my-4 my-md-5 d-flex flex-column flex-sm-row flex-wrap justify-content-center gap-2 gap-sm-3">
                     {{-- Form for Driver to Claim an unassigned task --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'Pending' && $transaction->driver_id == null)
                         <div class="action-box w-100 mb-3 mx-auto" style="max-width: 600px;">
@@ -282,8 +292,9 @@
 
                     {{-- "Start Task" and "Reject" buttons for Assigned Driver --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'Assigned' && $transaction->driver && $transaction->driver->user_id == auth()->user()->id)
-                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-secondary);"
-                            data-bs-toggle="modal" data-bs-target="#startTaskModal">
+                        <button type="button" class="btn text-white w-100 w-sm-auto"
+                            style="background-color: var(--color-secondary);" data-bs-toggle="modal"
+                            data-bs-target="#startTaskModal">
                             <i class="fas fa-play me-2"></i>Start Task
                         </button>
                         <button type="button" class="btn btn-outline-danger w-100 w-sm-auto" data-bs-toggle="modal"
@@ -294,16 +305,18 @@
 
                     {{-- "Mark as Arrived" button --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'In Progress' && $transaction->driver && $transaction->driver->user_id == auth()->user()->id)
-                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-secondary);"
-                            data-bs-toggle="modal" data-bs-target="#arriveTaskModal">
+                        <button type="button" class="btn text-white w-100 w-sm-auto"
+                            style="background-color: var(--color-secondary);" data-bs-toggle="modal"
+                            data-bs-target="#arriveTaskModal">
                             <i class="fas fa-map-marker-alt me-2"></i>Mark as Arrived
                         </button>
                     @endif
 
                     {{-- "Confirm & Rate" button --}}
                     @if(auth()->user()->role == 'checker' && $transaction->status == 'Arrived')
-                        <button type="button" class="btn text-white w-100 w-sm-auto" style="background-color: var(--color-secondary);"
-                            data-bs-toggle="modal" data-bs-target="#ratingModal">
+                        <button type="button" class="btn text-white w-100 w-sm-auto"
+                            style="background-color: var(--color-secondary);" data-bs-toggle="modal"
+                            data-bs-target="#ratingModal">
                             <i class="fas fa-clipboard-check me-2"></i>Confirm & Rate Driver
                         </button>
                     @endif
@@ -362,7 +375,7 @@
                 {{-- Booking Items Table and Footer Buttons --}}
                 <h5 class="fw-bold mt-4 mt-md-5">Booking Items</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle small">
+                    <table class="table mb-0 table-hover align-middle small">
                         <thead class="table-light">
                             <tr>
                                 <th>Item Name</th>
@@ -452,7 +465,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn text-white" style="background-color: var(--color-secondary);">Confirm
+                        <button type="submit" class="btn text-white"
+                            style="background-color: var(--color-secondary);">Confirm
                             & Start</button>
                     </div>
                 </form>
@@ -513,7 +527,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn text-white" style="background-color: var(--color-secondary);">Confirm
+                        <button type="submit" class="btn text-white"
+                            style="background-color: var(--color-secondary);">Confirm
                             Arrival</button>
                     </div>
                 </form>

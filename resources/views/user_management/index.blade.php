@@ -111,6 +111,12 @@
                 font-size: 0.85rem;
             }
         }
+
+        .table-responsive {
+            overscroll-behavior-x: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable;
+        }
     </style>
 
     <div class="container-fluid py-3 py-md-4 px-2 px-md-4">
@@ -118,7 +124,8 @@
         {{-- Main Header --}}
         <div class="text-center mb-3 mb-md-4">
             <h1 class="fw-bolder fs-3 fs-md-1" style="color: var(--color-secondary);">
-                <i class="fas fa-users-cog"></i> User Management
+                <!-- <i class="fas fa-users-cog"></i>  -->
+                <img src="{{ asset('images/group.png') }}" alt="Boxes Icon" class="me-2" style="width: 38px; height: auto;">User Management
             </h1>
             <p class="text-secondary fs-6 fs-md-5 fw-medium mb-0">Manage all users and their roles</p>
         </div>

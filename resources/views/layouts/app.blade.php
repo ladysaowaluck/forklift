@@ -353,7 +353,8 @@
 
                     <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center m-0"
                         href="{{ url('/transactions') }}">
-                        <img src="{{ asset('images/Logo_Nissin.png') }}" alt="Siam Nistran Logo"
+                        <!-- Logo_Nissin.png -->
+                        <img src="{{ asset('images/ForkLifting.jpg') }}" alt="Siam Nistran Logo"
                             class="navbar-logo me-2">
                         <span class="d-none d-sm-inline">{{ config('app.name', 'Forklift Tracker') }}</span>
                     </a>
