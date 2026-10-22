@@ -8,7 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\ForkliftController;
 use App\Http\Controllers\DriverController;
-use App\Http\Controllers\Auth\RegisterController; 
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AdminController;
 
@@ -72,14 +72,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/transactions/{transaction_id}/edit', [TransactionController::class, 'edit'])->name('transactions.edit');
     Route::put('/transactions/{transaction_id}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction_id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+
+    Route::get('/transactions/report', [TransactionController::class, 'report'])->name('transactions.report'); //Placed before {id} wildcard to avoid route conflict.
+    Route::post('/transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
     Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
-    
+
     // Action Routes สำหรับระบบ Forklift
     Route::post('/transactions/{transaction_id}/accept', [TransactionController::class, 'acceptTask'])->name('transactions.acceptTask');
     Route::post('/transactions/{transactionId}/arrive', [TransactionController::class, 'arrive'])->name('transactions.arrive');
     Route::post('/transactions/{transaction}/complete', [TransactionController::class, 'markAsComplete'])->name('transactions.complete');
     Route::post('/transactions/{transaction}/claim', [TransactionController::class, 'claimTask'])->name('transactions.claimTask');
-    
+
     // ฟังก์ชันสำหรับ Reject งาน
     Route::post('/transactions/{transactionId}/reject', [TransactionController::class, 'rejectTask'])->name('transactions.rejectTask');
 
@@ -90,7 +93,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/transactions/{transaction_id}/delete', [TransactionController::class, 'softDelete'])->name('transactions.softDelete');
 });
 
-Route::post('/transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
+
 
 
 Route::middleware(['auth'])->group(function () {

@@ -8,7 +8,7 @@ Role : Admin, User, Checker and Driver.
 
 
 Scope :
-1. E2E task lifecycle : Digitize job request from creation, driver claiming, photo verification at pickup and arrival, to    final inspection and rating.
+1. E2E task lifecycle : Digitize job request from creation, driver claiming, photo verification at pickup and arrival, to final inspection and rating.
 2. Traceability and Proof : Driver have to upload phots before sharing ans upload arrival, eliminatling dispute over lost or damage items.
 3. Realtime mornitor : Provide live status tracking and exportable report for logistic manager.
 

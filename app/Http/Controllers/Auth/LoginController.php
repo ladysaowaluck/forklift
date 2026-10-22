@@ -42,10 +42,44 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
+    public function login(Request $request)
+    {
+        try {
+            $this->validateLogin($request);
+
+            if (
+                method_exists($this, 'hasTooManyLoginAttempts') &&
+                $this->hasTooManyLoginAttempts($request)
+            ) {
+                $this->fireLockoutEvent($request);
+
+                return $this->sendLockoutResponse($request);
+            }
+
+            if ($this->attemptLogin($request)) {
+                if ($request->hasSession()) {
+                    $request->session()->put('auth.password_confirmed_at', time());
+                }
+
+                return $this->sendLoginResponse($request);
+            }
+
+            $this->incrementLoginAttempts($request);
+
+            return $this->sendFailedLoginResponse($request);
+        } catch (\Illuminate\Database\QueryException | \PDOException $e) {
+            Log::error('[LoginController] Database error during login: ' . $e->getMessage());
+
+            $request->session()->flash('login_error_type', 'db_error');
+            $request->session()->flash('login_error_message', 'Unable to connect to database service. Please try again later.');
+
+            throw ValidationException::withMessages([
+                $this->username() => ['Unable to connect to database service. Please try again later.'],
+            ]);
+        }
+    }
+
     /**
-     *Override sendFailedLoginResponse to distinguish
-     * "user not found" vs "wrong password" and flash a specific
-     * session key so the login view can show a targeted popup.
      *
      * @param  \Illuminate\Http\Request  $request
      * @throws \Illuminate\Validation\ValidationException
@@ -54,52 +88,28 @@ class LoginController extends Controller
     {
         $email = $request->input($this->username());
 
-        //[DEBUG] Log every failed login attempt with timestamp
-        Log::debug('[LoginController] sendFailedLoginResponse triggered', [
-            'email'      => $email,
-            'ip'         => $request->ip(),
-            'timestamp'  => now()->toDateTimeString(),
-        ]);
-
-        //Query DB to check if this email exists at all
-        $userExists = User::where('email', $email)->exists();
-
-        Log::debug('[LoginController] User existence check result', [
-            'email'      => $email,
-            'userExists' => $userExists,
-        ]);
-
-        if (! $userExists) {
-            //Email not in DB → "User Not Found" popup
-            $errorType    = 'user_not_found';
-            $errorMessage = 'No account found with that email address.';
-
-            //[DEBUG] Log::info works in Controller — $this->info() is Artisan-only and would crash here
-            Log::info('[DEBUG] LoginController → user_not_found for email: ' . $email);
-            Log::debug('[LoginController] Result → user_not_found', ['email' => $email]);
-        } else {
-            //Email found but password wrong → "Incorrect Password" popup
-            $errorType    = 'wrong_password';
-            $errorMessage = 'Incorrect password. Please try again.';
-
-            //[DEBUG] Same reason — use Log::info, not $this->info()
-            Log::info('[DEBUG] LoginController → wrong_password for email: ' . $email);
-            Log::debug('[LoginController] Result → wrong_password', ['email' => $email]);
+        $userExists = false;
+        try {
+            $userExists = User::where('email', $email)->exists();
+        } catch (\Throwable $e) {
+            Log::error('[LoginController] Database check error: ' . $e->getMessage());
+            $userExists = true; // Fallback to generic message without exposing DB error
         }
 
-        //Flash both keys so the Blade modal can read them on the redirected GET
-        $request->session()->flash('login_error_type',    $errorType);
+        if (!$userExists) {
+            $errorType = 'user_not_found';
+            $errorMessage = "Email doesn't exist";
+        } else {
+            // Do not clarify whether email or password went wrong
+            $errorType = 'auth_failed';
+            $errorMessage = 'Email or password incorrect';
+        }
+
+        $request->session()->flash('login_error_type', $errorType);
         $request->session()->flash('login_error_message', $errorMessage);
 
-        Log::debug('[LoginController] Session flashed', [
-            'login_error_type'    => $errorType,
-            'login_error_message' => $errorMessage,
-        ]);
-
-       $failedField = ! $userExists ? $this->username() : 'password';
-
         throw ValidationException::withMessages([
-            $failedField => [$errorMessage],
+            $this->username() => [$errorMessage],
         ]);
     }
 }

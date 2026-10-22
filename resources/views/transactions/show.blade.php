@@ -306,7 +306,7 @@
                     {{-- "Mark as Arrived" button --}}
                     @if(auth()->user()->role == 'driver' && $transaction->status == 'In Progress' && $transaction->driver && $transaction->driver->user_id == auth()->user()->id)
                         <button type="button" class="btn text-white w-100 w-sm-auto"
-                            style="background-color: var(--color-secondary);" data-bs-toggle="modal"
+                            style="background-color: var(--color-arrived);" data-bs-toggle="modal"
                             data-bs-target="#arriveTaskModal">
                             <i class="fas fa-map-marker-alt me-2"></i>Mark as Arrived
                         </button>
@@ -334,7 +334,7 @@
 
                                         {{-- Edit Button for Start Image --}}
                                         @if(auth()->user()->role == 'driver' && in_array($transaction->status, ['Assigned', 'In Progress', 'Arrived']) && $transaction->driver->user_id == auth()->id())
-                                            <button class="btn btn-sm btn-warning btn-edit-image" data-bs-toggle="modal"
+                                            <button class="btn btn-sm btn-danger btn-edit-image" data-bs-toggle="modal"
                                                 data-bs-target="#editStartImageModal">
                                                 <i class="fas fa-edit me-1"></i> Edit
                                             </button>
@@ -355,7 +355,7 @@
 
                                         {{-- Edit Button for End Image --}}
                                         @if(auth()->user()->role == 'driver' && $transaction->status == 'Arrived' && $transaction->driver->user_id == auth()->id())
-                                            <button class="btn btn-sm btn-warning btn-edit-image" data-bs-toggle="modal"
+                                            <button class="btn btn-sm btn-danger btn-edit-image" data-bs-toggle="modal"
                                                 data-bs-target="#editEndImageModal">
                                                 <i class="fas fa-edit me-1"></i> Edit
                                             </button>

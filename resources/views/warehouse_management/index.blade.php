@@ -120,6 +120,11 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-gutter: stable;
         }
+
+        .table-header {
+            font-weight: 700;
+            color: #2f3336;
+        }
     </style>
 
     <div class="container-fluid py-3 py-md-4 px-2 px-md-4">
@@ -149,10 +154,10 @@
                     <table class="table mb-0 modern-table align-middle">
                         <thead class="text-center">
                             <tr>
-                                <th class="text-start">Name</th>
-                                <th class="text-start">Location</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th class="table-header text-start ">Name</th>
+                                <th class="table-header text-start">Location</th>
+                                <th class="table-header">Status</th>
+                                <th class="table-header">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-center">

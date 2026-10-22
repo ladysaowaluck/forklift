@@ -46,6 +46,12 @@ class TransactionsExport implements FromCollection, WithHeadings
         if (!empty($this->filters['driver_rating'])) {
             $query->where('driver_rating', $this->filters['driver_rating']);
         }
+        if (!empty($this->filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $this->filters['date_from']);
+        }
+        if (!empty($this->filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $this->filters['date_to']);
+        }
         
         $transactions = $query->get();
 

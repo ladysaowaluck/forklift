@@ -126,7 +126,8 @@
         <div class="text-center mb-3 mb-md-4">
             <h1 class="fw-bolder fs-3 fs-md-1" style="color: var(--color-secondary);">
                 <!-- <i class="fas fa-truck-pickup"></i>  -->
-                <img src="{{ asset('images/forklift.png') }}" alt="Boxes Icon" class="me-2" style="width: 38px; height: auto;">Forklift Management
+                <img src="{{ asset('images/forklift.png') }}" alt="Boxes Icon" class="me-2"
+                    style="width: 38px; height: auto;">Forklift Management
             </h1>
             <p class="text-secondary fs-6 fs-md-5 fw-medium mb-0">Manage all company forklifts</p>
         </div>
@@ -148,6 +149,7 @@
                 <!-- DESKTOP VIEW (Table Layout)  -->
                 <div class="table-responsive d-none d-md-block">
                     <table class="table mb-0 modern-table align-middle">
+
                         <thead class="text-center">
                             <tr>
                                 <th class="text-start">Model</th>

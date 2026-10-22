@@ -30,9 +30,9 @@
                         <input id="password" type="password" name="password"
                             class="form-control @error('password') is-invalid @enderror" placeholder="Password"
                             aria-label="Password" required autocomplete="current-password">
-                        <button class="btn btn-toggle-pw" type="button" id="togglePassword" aria-label="Show password">
+                        {{-- <button class="btn btn-toggle-pw" type="button" id="togglePassword" aria-label="Show password">
                             <i class="fas fa-eye"></i>
-                        </button>
+                        </button> --}}
                         @error('password')
                             <div class="invalid-feedback text-start">{{ $message }}</div>
                         @enderror
@@ -64,80 +64,90 @@
     </div>
 
     @if (session('login_error_type'))
-    <div class="modal fade" id="loginErrorModal" tabindex="-1" aria-labelledby="loginErrorModalLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal fade" id="loginErrorModal" tabindex="-1" aria-labelledby="loginErrorModalLabel" aria-modal="true"
+            role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-                <!-- Header stripe coloured by error type -->
-                <div class="modal-header border-0 pb-0
-                    {{ session('login_error_type') === 'user_not_found' ? 'bg-warning-subtle' : 'bg-danger-subtle' }}">
-                    <div class="w-100 text-center pt-3">
-                        <div class="error-icon-wrap mb-2">
-                            @if (session('login_error_type') === 'user_not_found')
-                                <i class="fas fa-user-slash fa-2x text-warning"></i>
-                            @else
-                                <i class="fas fa-lock fa-2x text-danger"></i>
-                            @endif
+                    <!-- Header stripe coloured by error type -->
+                    <!-- not clarify whether email or password was wrong, and handle database errors cleanly -->
+                    <div class="modal-header border-0 pb-0
+                            {{ session('login_error_type') === 'user_not_found' || session('login_error_type') === 'db_error' ? 'bg-warning-subtle' : 'bg-danger-subtle' }}">
+                        <div class="w-100 text-center pt-3">
+                            <div class="error-icon-wrap mb-2">
+                                @if (session('login_error_type') === 'user_not_found')
+                                    <i class="fas fa-user-slash fa-2x text-warning"></i>
+                                @elseif (session('login_error_type') === 'db_error')
+                                    <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                                @else
+                                    <i class="fas fa-lock fa-2x text-danger"></i>
+                                @endif
+                            </div>
+                            <h5 class="modal-title fw-bold" id="loginErrorModalLabel">
+                                @if (session('login_error_type') === 'user_not_found')
+                                    Email Not Found
+                                @elseif (session('login_error_type') === 'db_error')
+                                    Connection Error
+                                @else
+                                    Login Failed
+                                @endif
+                            </h5>
                         </div>
-                        <h5 class="modal-title fw-bold" id="loginErrorModalLabel">
-                            @if (session('login_error_type') === 'user_not_found')
-                                User Not Found
-                            @else
-                                Incorrect Password
-                            @endif
-                        </h5>
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
 
-                <div class="modal-body text-center px-4 py-3">
-                    <p class="text-body-secondary mb-0">
-                        {{ session('login_error_message') }}
-                    </p>
-                </div>
+                    <div class="modal-body text-center px-4 py-3">
+                        <p class="text-body-secondary mb-0">
+                            {{ session('login_error_message') }}
+                        </p>
+                    </div>
 
-                <div class="modal-footer border-0 justify-content-center pb-4">
-                    <button type="button" class="btn btn-login px-4 fw-bold" data-bs-dismiss="modal">
-                        Try Again
-                    </button>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-login px-4 fw-bold" data-bs-dismiss="modal">
+                            Try Again
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
     <script>
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            const input = document.getElementById('password');
-            const icon = this.querySelector('i');
-            const show = input.type === 'password';
-            input.type = show ? 'text' : 'password';
-            icon.classList.toggle('fa-eye', !show);
-            icon.classList.toggle('fa-eye-slash', show);
-            this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
-        });
+        // Guard event listener with a null check so no console errors occur while toggle button is commented out.
+        const toggleBtn = document.getElementById('togglePassword');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                const input = document.getElementById('password');
+                const icon = this.querySelector('i');
+                const show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                icon.classList.toggle('fa-eye', !show);
+                icon.classList.toggle('fa-eye-slash', show);
+                this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            });
+        }
     </script>
 
     @if (session('login_error_type'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var attempts = 0;
-            function triggerModal() {
-                var modalEl = document.getElementById('loginErrorModal');
-                if (!modalEl) return;
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var attempts = 0;
+                function triggerModal() {
+                    var modalEl = document.getElementById('loginErrorModal');
+                    if (!modalEl) return;
 
-                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    var loginErrorModal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
-                    loginErrorModal.show();
-                } else if (attempts < 20) {
-                    attempts++;
-                    setTimeout(triggerModal, 100);
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        var loginErrorModal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+                        loginErrorModal.show();
+                    } else if (attempts < 20) {
+                        attempts++;
+                        setTimeout(triggerModal, 100);
+                    }
                 }
-            }
-            triggerModal();
-        });
-    </script>
+                triggerModal();
+            });
+        </script>
     @endif
 
     <style>
@@ -152,12 +162,12 @@
         }
 
         /* #app>nav.navbar {
-                    visibility: hidden;
-                } */
+                        visibility: hidden;
+                    } */
         /* #app[data-route="login"]>nav.navbar,
-        body.page-login #app>nav.navbar {
-            display: none !important;
-        } */
+            body.page-login #app>nav.navbar {
+                display: none !important;
+            } */
 
         body {
             background: url('{{ asset('images/siam-nistran.jpg') }}') no-repeat center center fixed;
@@ -255,7 +265,7 @@
 
         /* Button */
         .btn-login {
-            background-color: var(--color-primary);
+            background-color: var(--color-secondary);
             border-color: var(--color-primary);
             color: #fff;
             border-radius: 0.6rem;

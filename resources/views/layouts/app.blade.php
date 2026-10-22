@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -19,7 +20,7 @@
 
     <style>
         :root {
-            --color-primary: #f3f3f3;
+            --color-primary: #ffffff !important;
             /* Murata Primary Red */
             --color-secondary: #8B0019;
             /* Murata Secondary Blue */
@@ -42,6 +43,8 @@
             background-color: var(--color-background);
             color: #212529;
             font-size: 16px;
+            min-width: 320px;
+            margin: 0 auto;
         }
 
         .card-main-content {
@@ -111,7 +114,7 @@
 
         /* NEW: Custom Navbar Link Styling for Clarity */
         .navbar-dark .nav-link {
-            color: #004B8D;
+            color: #ffffff;
             font-weight: 500;
             /* Medium weight for better readability */
             padding: 0.5rem 1rem;
@@ -120,14 +123,14 @@
         }
 
         .navbar-dark .nav-link:hover {
-            color: #004B8D;
+            color: #ffffff;
             background-color: rgba(0, 0, 0, 0.1);
             /* Subtle background highlight on hover */
         }
 
         /* Style for the currently active link */
         .navbar-dark .nav-link.active {
-            color: #004B8D;
+            color: #ffffff;
             font-weight: 700;
             /* Bolder for active link */
             background-color: rgba(0, 0, 0, 0.2);
@@ -328,127 +331,135 @@
         .fa-lg {
             font-size: 1.75em;
         }
+
+        .app-container {
+            min-width: 320px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
 <body>
-    <div id="app">
+    <div class="app-container">
+        <div id="app">
 
-        <!-- TOP BAR: always visible (desktop + mobile) -->
-        <nav class="navbar navbar-dark sticky-top shadow-sm app-topbar" style="background-color: var(--color-primary);">
-            <div class="container-fluid px-3 px-lg-4">
+            <!-- TOP BAR: always visible (desktop + mobile) -->
+            <nav class="navbar navbar-dark sticky-top shadow-sm app-topbar"
+                style="background-color: var(--color-primary);">
+                <div class="container-fluid px-3 px-lg-4">
 
-                <div class="d-flex align-items-center">
-                    <!-- Only render mobile navigation toggler for Admin users -->
-                    @auth
-                        @if(Auth::user()->isAdmin())
-                            <!-- Toggler: visible on mobile only -->
-                            <button class="navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
-                                aria-label="{{ __('Toggle navigation') }}">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                        @endif
-                    @endauth
+                    <div class="d-flex align-items-center">
+                        <!-- Only render mobile navigation toggler for Admin users -->
+                        @auth
+                            @if(Auth::user()->isAdmin())
+                                <!-- Toggler: visible on mobile only -->
+                                <button class="navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
+                                    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
+                                    aria-label="{{ __('Toggle navigation') }}">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                            @endif
+                        @endauth
 
-                    <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center m-0"
-                        href="{{ url('/transactions') }}">
-                        <!-- Logo_Nissin.png -->
-                        <img src="{{ asset('images/ForkLifting.jpg') }}" alt="Siam Nistran Logo"
-                            class="navbar-logo me-2">
-                        <span class="d-none d-sm-inline">{{ config('app.name', 'Forklift Tracker') }}</span>
-                    </a>
-                </div>
-
-                @auth
-                    <!-- User dropdown (top right, desktop + mobile) -->
-                    <div class="dropdown" data-bs-theme="dark">
-                        <a id="navbarDropdown"
-                            class="user-account text-decoration-none dropdown-toggle d-flex align-items-center" href="#"
-                            role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            <i class="fas fa-user-circle fa-lg me-2"></i>
-                            <span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
+                        <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center m-0"
+                            href="{{ url('/transactions') }}">
+                            <!-- Logo_Nissin.png -->
+                            <img src="{{ asset('images/ForkLifting.jpg') }}" alt="Siam Nistran Logo"
+                                class="navbar-logo me-2">
+                            <span class="d-none d-sm-inline">{{ config('app.name', 'Forklift Tracker') }}</span>
                         </a>
+                    </div>
 
-                        <div class="dropdown-menu dropdown-menu-end user-menu shadow" aria-labelledby="navbarDropdown">
-                            <!-- <a class="dropdown-item" href="{{ route('logout') }}"
-                                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                        <i class="fas fa-sign-out-alt me-2"></i>{{ __('Logout') }}
-                                                    </a> -->
-                            <div class="user-menu-header px-3 py-2">
-                                <div class="fw-semibold text-truncate">{{ Auth::user()->name }}</div>
-                                <div class="small text-body-secondary text-capitalize">{{ Auth::user()->role }}</div>
-                            </div>
-                            <hr class="dropdown-divider">
-
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt fa-fw me-2"></i>{{ __('Logout') }}
+                    @auth
+                        <!-- User dropdown (top right, desktop + mobile) -->
+                        <div class="dropdown" data-bs-theme="dark">
+                            <a id="navbarDropdown"
+                                class="user-account text-decoration-none dropdown-toggle d-flex align-items-center" href="#"
+                                role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <i class="fas fa-user-circle fa-lg me-2"></i>
+                                <span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
                             </a>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
+                            <div class="dropdown-menu dropdown-menu-end user-menu shadow" aria-labelledby="navbarDropdown">
+                                <!-- <a class="dropdown-item" href="{{ route('logout') }}"
+                                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                                    <i class="fas fa-sign-out-alt me-2"></i>{{ __('Logout') }}
+                                                                </a> -->
+                                <div class="user-menu-header px-3 py-2">
+                                    <div class="fw-semibold text-truncate">{{ Auth::user()->name }}</div>
+                                    <div class="small text-body-secondary text-capitalize">{{ Auth::user()->role }}</div>
+                                </div>
+                                <hr class="dropdown-divider">
+
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt fa-fw me-2"></i>{{ __('Logout') }}
+                                </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                @endauth
-            </div>
-        </nav>
-
-        <!-- MENU: sidebar on desktop, slide-in drawer on mobile (Admin only) -->
-        <!-- Display sidebar navigation exclusively for Admin users -->
-        @auth
-            @if(Auth::user()->isAdmin())
-                <div class="offcanvas-lg offcanvas-start app-sidebar" tabindex="-1" id="sidebarMenu" data-bs-theme="dark">
-
-                    <div class="offcanvas-header">
-                        <!-- <img src="{{ asset('images/SNC_logo_white.png') }}" alt="Company Logo" class="login-logo mb-3 mb-md-4"> -->
-                        <h5 class="offcanvas-title">{{ config('app.name', 'Forklift Tracker') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
-                            aria-label="Close"></button>
-                    </div>
-
-                    <div class="offcanvas-body p-3">
-                        <ul class="nav nav-pills flex-column gap-1 w-100">
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('transactions*') ? 'active' : '' }}"
-                                    href="{{ route('transactions.index') }}">
-                                    <i class="fas fa-calendar-check fa-fw me-2"></i>Bookings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('warehouses*') || request()->is('warehouse-management*') ? 'active' : '' }}"
-                                    href="{{ route('warehouse.management') }}">
-                                    <i class="fas fa-warehouse fa-fw me-2"></i>{{ __('Warehouses') }}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('forklifts*') || request()->is('forklift-management*') ? 'active' : '' }}"
-                                    href="{{ route('forklift.management') }}">
-                                    <i class="fas fa-truck-moving fa-fw me-2"></i>{{ __('Forklifts') }}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->is('user-management*') ? 'active' : '' }}"
-                                    href="{{ route('user.management') }}">
-                                    <i class="fas fa-users fa-fw me-2"></i>{{ __('Users') }}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="sidebar-credit mt-auto pt-3 text-center small">
-                        &copy; {{ date('Y') }} updated Nissin HB
-                    </div>
-
+                    @endauth
                 </div>
-            @endif
-        @endauth
+            </nav>
 
-        <!-- PAGE CONTENT -->
-        <main class="{{ Auth::check() && Auth::user()->isAdmin() ? 'app-content' : '' }}">
-            @yield('content')
-        </main>
+            <!-- MENU: sidebar on desktop, slide-in drawer on mobile (Admin only) -->
+            <!-- Display sidebar navigation exclusively for Admin users -->
+            @auth
+                @if(Auth::user()->isAdmin())
+                    <div class="offcanvas-lg offcanvas-start app-sidebar" tabindex="-1" id="sidebarMenu" data-bs-theme="dark">
+
+                        <div class="offcanvas-header">
+                            <!-- <img src="{{ asset('images/SNC_logo_white.png') }}" alt="Company Logo" class="login-logo mb-3 mb-md-4"> -->
+                            <h5 class="offcanvas-title">{{ config('app.name', 'Forklift Tracker') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
+                                aria-label="Close"></button>
+                        </div>
+
+                        <div class="offcanvas-body p-3">
+                            <ul class="nav nav-pills flex-column gap-1 w-100">
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('transactions*') ? 'active' : '' }}"
+                                        href="{{ route('transactions.index') }}">
+                                        <i class="fas fa-calendar-check fa-fw me-2"></i>Bookings
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('warehouses*') || request()->is('warehouse-management*') ? 'active' : '' }}"
+                                        href="{{ route('warehouse.management') }}">
+                                        <i class="fas fa-warehouse fa-fw me-2"></i>{{ __('Warehouses') }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('forklifts*') || request()->is('forklift-management*') ? 'active' : '' }}"
+                                        href="{{ route('forklift.management') }}">
+                                        <i class="fas fa-truck-moving fa-fw me-2"></i>{{ __('Forklifts') }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('user-management*') ? 'active' : '' }}"
+                                        href="{{ route('user.management') }}">
+                                        <i class="fas fa-users fa-fw me-2"></i>{{ __('Users') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-credit mt-auto pt-3 text-center small">
+                            &copy; {{ date('Y') }} updated Nissin HB
+                        </div>
+
+                    </div>
+                @endif
+            @endauth
+
+            <!-- PAGE CONTENT -->
+            <main class="{{ Auth::check() && Auth::user()->isAdmin() ? 'app-content' : '' }}">
+                @yield('content')
+            </main>
+        </div>
     </div>
 
 

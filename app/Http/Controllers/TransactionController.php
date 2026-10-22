@@ -16,17 +16,59 @@ use Illuminate\Support\Facades\Storage; // เพิ่มสำหรับก�
 class TransactionController extends Controller
 {
 
+    // Show a filtered preview (search report) before exporting to Excel.
+    public function report(Request $request)
+    {
+        $forklifts = Forklift::all();
+        $drivers = Driver::all();
+        $warehouses = Warehouse::all();
+
+        $filters = $request->only(['forklift_id', 'driver_id', 'warehouse_from', 'warehouse_to', 'status', 'date_from', 'date_to']);
+
+        $query = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo', 'details'])
+            ->where('status', '!=', 'Deleted');
+
+        if (!empty($filters['forklift_id'])) {
+            $query->where('forklift_id', (int) $filters['forklift_id']);
+        }
+        if (!empty($filters['driver_id'])) {
+            $query->where('driver_id', (int) $filters['driver_id']);
+        }
+        if (!empty($filters['warehouse_from'])) {
+            $query->where('warehouse_from', (int) $filters['warehouse_from']);
+        }
+        if (!empty($filters['warehouse_to'])) {
+            $query->where('warehouse_to', (int) $filters['warehouse_to']);
+        }
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        $transactions = $request->isMethod('get') && $request->hasAny(array_keys($filters))
+            ? $query->latest()->get()
+            : collect();
+
+        return view('transactions.export', compact('forklifts', 'drivers', 'warehouses', 'transactions', 'filters'));
+    }
+
     public function export(Request $request)
     {
         $filters = $request->only([
-            'forklift_id', 
-            'driver_id', 
-            'warehouse_from', 
-            'warehouse_to', 
+            'forklift_id',
+            'driver_id',
+            'warehouse_from',
+            'warehouse_to',
             'status',
-            'driver_rating' 
+            'date_from',
+            'date_to',
         ]);
-    
+
         return Excel::download(new TransactionsExport($filters), 'transactions_report.xlsx');
     }
 
@@ -64,13 +106,21 @@ class TransactionController extends Controller
             $query->where('driver_rating', (int) $request->driver_rating);
         }
 
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
         if (auth()->user()->role == 'driver') {
             $driver = Driver::where('user_id', auth()->id())->first();
 
             if ($driver) {
                 $query->where(function ($subQuery) use ($driver) {
                     $subQuery->where('driver_id', $driver->driver_id)
-                            ->orWhere('status', 'Pending');
+                        ->orWhere('status', 'Pending');
                 });
             } else {
                 $query->where('status', 'Pending');
@@ -80,7 +130,7 @@ class TransactionController extends Controller
         if (auth()->user()->role == 'driver') {
             $query->orderByRaw("CASE WHEN status = 'Pending' THEN 1 ELSE 2 END ASC")
                 ->orderBy('created_at', 'ASC');
-            
+
             $transactions = $query->paginate(10);
         } else {
             $transactions = $query->latest()->paginate(10);
@@ -92,16 +142,24 @@ class TransactionController extends Controller
         $inProgressCount = Transaction::where('status', 'In Progress')->count();
         $arrivedCount = Transaction::where('status', 'Arrived')->count();
         $completedCount = Transaction::where('status', 'Completed')->count();
-        $rejectedCount = Transaction::where('status', 'Rejected')->count(); 
+        $rejectedCount = Transaction::where('status', 'Rejected')->count();
         $totalTransactions = Transaction::where('status', '!=', 'Deleted')->count();
-        
+
         return view('transactions.index', compact(
-            'forklifts', 'drivers', 'warehouses', 'transactions','pendingCount',
-            'assignedCount', 'inProgressCount', 'arrivedCount',
-            'completedCount', 'rejectedCount', 'totalTransactions'
+            'forklifts',
+            'drivers',
+            'warehouses',
+            'transactions',
+            'pendingCount',
+            'assignedCount',
+            'inProgressCount',
+            'arrivedCount',
+            'completedCount',
+            'rejectedCount',
+            'totalTransactions'
         ));
     }
-        
+
     public function create()
     {
         $forklifts = Forklift::all();
@@ -121,18 +179,18 @@ class TransactionController extends Controller
             'details.*.unit' => 'required|string',
             'details.*.description' => 'nullable|string',
         ]);
-        
+
         $transaction = Transaction::create([
             'warehouse_from' => $request->warehouse_from,
             'warehouse_to' => $request->warehouse_to,
             'created_by_user_id' => auth()->id(),
-            'status' => 'Pending', 
+            'status' => 'Pending',
         ]);
-        
+
         foreach ($request->details as $detail) {
             $transaction->details()->create($detail);
         }
-        
+
         return redirect()->route('transactions.index')->with('success', 'Transaction created successfully!');
     }
 
@@ -142,7 +200,7 @@ class TransactionController extends Controller
         $transaction = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo', 'details'])->findOrFail($id);
         return view('transactions.show', compact('transaction', 'forklifts'));
     }
-    
+
     public function edit($transaction_id)
     {
         $transaction = Transaction::findOrFail($transaction_id);
@@ -151,7 +209,7 @@ class TransactionController extends Controller
         $warehouses = Warehouse::all();
         return view('transactions.edit', compact('transaction', 'forklifts', 'drivers', 'warehouses'));
     }
-    
+
     public function update(Request $request, $transaction_id)
     {
         $request->validate([
@@ -181,21 +239,21 @@ class TransactionController extends Controller
             return redirect()->back()->with('error', 'You are not authorized to claim this task.');
         }
         $transaction = Transaction::findOrFail($transaction_id);
-        
+
         if ($transaction->status !== 'Pending') {
             return redirect()->back()->with('error', 'This task is no longer available for claiming.');
         }
 
         $driver = Driver::where('user_id', $user->id)->firstOrFail();
         $request->validate(['forklift_id' => 'required|exists:forklifts,forklift_id']);
-        
+
         $transaction->update([
-            'driver_id'   => $driver->driver_id, 
-            'status'      => 'Assigned',
+            'driver_id' => $driver->driver_id,
+            'status' => 'Assigned',
             'forklift_id' => $request->input('forklift_id'),
-            'claimed_at'  => now(),
+            'claimed_at' => now(),
         ]);
-        
+
         return redirect()->back()->with('success', 'You have successfully claimed this task.');
     }
 
@@ -231,7 +289,7 @@ class TransactionController extends Controller
     public function acceptTask(Request $request, $transactionId)
     {
         $transaction = Transaction::findOrFail($transactionId);
-        
+
         if ($transaction->status !== 'Assigned') {
             return redirect()->route('transactions.show', $transactionId)->with('error', 'Cannot start task: Status is ' . $transaction->status);
         }
@@ -242,19 +300,19 @@ class TransactionController extends Controller
         }
         $request->validate(['start_task_image' => 'required|image|max:5120']);
         $imagePath = $request->file('start_task_image')->store('start_images', 'public');
-        
+
         $transaction->status = 'In Progress';
         $transaction->start_task_image_path = $imagePath;
         $transaction->started_at = now();
         $transaction->save();
-    
+
         return redirect()->route('transactions.show', $transactionId)->with('success', 'You have successfully accepted the task.');
     }
-    
+
     public function arrive(Request $request, $transactionId)
     {
         $transaction = Transaction::findOrFail($transactionId);
-        
+
         if ($transaction->status !== 'In Progress') {
             return redirect()->route('transactions.show', $transactionId)->with('error', 'Invalid action: Task is ' . $transaction->status);
         }
@@ -307,7 +365,7 @@ class TransactionController extends Controller
 
         return redirect()->back()->with('success', 'แก้ไขรูปภาพจบงานเรียบร้อยแล้ว');
     }
-    
+
     public function markAsComplete(Request $request, $transactionId)
     {
         $transaction = Transaction::findOrFail($transactionId);
@@ -327,7 +385,7 @@ class TransactionController extends Controller
         }
         return redirect()->route('transactions.show', $transactionId)->with('error', 'Unauthorized action or invalid status.');
     }
-    
+
     public function monitor()
     {
         return view('transactions.monitor');
@@ -336,10 +394,10 @@ class TransactionController extends Controller
     public function getActiveTransactionsApi()
     {
         $transactions = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo'])
-            ->latest() 
+            ->latest()
             ->take(30)
             ->get();
-            
+
         $transactions->each(function ($transaction) {
             $transaction->updated_human = Carbon::parse($transaction->updated_at)->diffForHumans();
             $transaction->updated_raw = $transaction->updated_at->toIso8601String();
@@ -355,12 +413,12 @@ class TransactionController extends Controller
         }
 
         $transaction = Transaction::findOrFail($transaction_id);
-        
-        $transaction->status = 'Deleted'; 
-        
-        $transaction->save(); 
+
+        $transaction->status = 'Deleted';
+
+        $transaction->save();
 
         return redirect()->route('transactions.index')
-                        ->with('success', "Transaction #{$transaction->transaction_id} has been deleted.");
+            ->with('success', "Transaction #{$transaction->transaction_id} has been deleted.");
     }
 }

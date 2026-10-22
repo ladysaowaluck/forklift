@@ -13,8 +13,8 @@ class AutoCompleteTasks extends Command
 
     protected $description = 'Auto confirm and rate tasks that have been Arrived for more than 3 hours';
 
-    private const TIMEOUT_HOURS    = 0.02;  // 3 hour
-    private const MAX_LOOKBACK_DAYS = 7; //prevents auto-rating ancient backlog tasks
+    private const TIMEOUT_HOURS    = 3;  // 3 hour
+    private const MAX_LOOKBACK_DAYS = 7; //prevents auto-rating ancient backlog tasks   
     private const BATCH_LIMIT       = 200; //prevents memory spikes
 
     public function handle(): int
@@ -35,16 +35,16 @@ class AutoCompleteTasks extends Command
             ->get();
 
         $this->line('=================================================');
-        $this->info('[DEBUG] tasks:auto-complete running at: ' . now()->format('Y-m-d H:i:s'));
-        $this->line('[DEBUG] Looking for tasks arrived before: ' . $timeoutThreshold->format('Y-m-d H:i:s'));
-        $this->line('[DEBUG] Safe lookback window start:       ' . $lookbackThreshold->format('Y-m-d H:i:s'));
+        $this->info('[DEBUG]:: tasks:auto-complete running at: ' . now()->format('Y-m-d H:i:s'));
+        $this->line('[DEBUG]:: Looking for tasks arrived before: ' . $timeoutThreshold->format('Y-m-d H:i:s'));
+        $this->line('[DEBUG]:: Safe lookback window start:       ' . $lookbackThreshold->format('Y-m-d H:i:s'));
 
         if ($pendingTasks->isEmpty()) {
             $totalArrived  = Transaction::where('status', 'Arrived')->count();
             $latestArrived = Transaction::where('status', 'Arrived')->latest('arrived_at')->first();
 
-            $this->warn('[DEBUG] No eligible tasks found.');
-            $this->line("[DEBUG] Total 'Arrived' tasks in DB: {$totalArrived}");
+            $this->warn('[DEBUG]::No eligible tasks found.');
+            $this->line("[DEBUG]::Total 'Arrived' tasks in DB: {$totalArrived}");
 
             if ($latestArrived?->arrived_at) {
                 $this->line('[DEBUG] Most recent arrived_at: ' . $latestArrived->arrived_at->format('Y-m-d H:i:s')
@@ -55,24 +55,24 @@ class AutoCompleteTasks extends Command
             return Command::SUCCESS;
         }
 
-        $this->info('[DEBUG] Found ' . $pendingTasks->count() . ' task(s) ready to auto-complete.');
+        $this->info('[DEBUG]::Found ' . $pendingTasks->count() . ' task(s) ready to auto-complete.');
         $this->line('=================================================');
 
         $count = 0;
         foreach ($pendingTasks as $task) {
 
-            $completedAt = Carbon::parse($task->arrived_at)->addHours(self::TIMEOUT_HOURS);
+            $completedAt = Carbon::parse($task->arrived_at)->addHours(self::TIMEOUT_HOURS); //arrived_at + 3 hours!!
             if ($completedAt->isFuture()) {
                 $completedAt = now(); // safety cap — never set completed_at in the future
             }
 
-            $this->line("[DEBUG] Task #{$task->transaction_id} | Driver: {$task->driver_id} | arrived_at: {$task->arrived_at} | completed_at → {$completedAt}");
+            $this->line("[DEBUG]:: Task #{$task->transaction_id} | Driver: {$task->driver_id} | arrived_at: {$task->arrived_at} | completed_at → {$completedAt}");
 
             // $task->update([
             //     'status' => 'Completed',
             //     'driver_rating' => 5,
             //     'driver_comment' => 'Auto-confirmed by System (Timeout 3 hours)',
-            //     'completed_at' => now(),
+            //     'completed_at' => now(), // accurate historical timestamp, not now()
             // ]);
             // $count++;
 

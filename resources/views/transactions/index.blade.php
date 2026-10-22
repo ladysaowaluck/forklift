@@ -63,6 +63,18 @@
             border-radius: 50rem;
         }
 
+        /* Gemini : Floating KPI cards on desktop scrolling for admin and checker roles; remains static on mobile */
+        @media (min-width: 992px) {
+            .kpi-floating-web {
+                position: sticky;
+                top: var(--topbar-height, 60px);
+                z-index: 1015;
+                background-color: var(--color-background);
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+        }
+
         .card-main-content {
             background-color: #ffffff;
             border: 1px solid var(--color-border);
@@ -220,34 +232,36 @@
             <p class="text-secondary fs-6 fw-medium mb-0">Real-time status of all booking transactions</p>
         </div>
 
-        {{-- KPI Cards Section --}}
-        <div class="row g-2 g-md-3">
-            @php
-                $kpi_data = [
-                    ['title' => 'Pending', 'count' => $pendingCount, 'color' => 'var(--color-warning)'],
-                    ['title' => 'Assigned', 'count' => $assignedCount, 'color' => 'var(--color-booking)'],
-                    ['title' => 'In Progress', 'count' => $inProgressCount, 'color' => 'var(--color-secondary)'],
-                    ['title' => 'Arrived', 'count' => $arrivedCount, 'color' => 'var(--color-arrived)'],
-                    ['title' => 'Completed', 'count' => $completedCount, 'color' => 'var(--color-success)'],
-                    ['title' => 'Rejected', 'count' => $rejectedCount ?? 0, 'color' => 'var(--color-danger)']
-                ];
-            @endphp
+        {{-- Gemini : Float KPI cards section when scrolling on web for admin and checker roles; remains static on mobile --}}
+        <div class="@if(in_array(auth()->user()->role ?? '', ['admin', 'checker'])) kpi-floating-web @endif">
+            <div class="row g-2 g-md-3">
+                @php
+                    $kpi_data = [
+                        ['title' => 'Pending', 'count' => $pendingCount, 'color' => 'var(--color-warning)'],
+                        ['title' => 'Assigned', 'count' => $assignedCount, 'color' => 'var(--color-booking)'],
+                        ['title' => 'In Progress', 'count' => $inProgressCount, 'color' => 'var(--color-secondary)'],
+                        ['title' => 'Arrived', 'count' => $arrivedCount, 'color' => 'var(--color-arrived)'],
+                        ['title' => 'Completed', 'count' => $completedCount, 'color' => 'var(--color-success)'],
+                        ['title' => 'Rejected', 'count' => $rejectedCount ?? 0, 'color' => 'var(--color-danger)']
+                    ];
+                @endphp
 
-            @foreach($kpi_data as $kpi)
-                <div class="col-6 col-md-4 col-xl-2">
-                    <div class="card card-kpi p-1 p-md-2 h-100">
-                        <div class="card-body text-center p-2 p-md-3">
-                            <p class="kpi-title mb-1 text-truncate">{{ $kpi['title'] }}</p>
-                            <h2 class="kpi-value mb-2" style="color: {{ $kpi['color'] }};">{{ $kpi['count'] }}</h2>
-                            <div class="progress kpi-progress">
-                                <div class="progress-bar" role="progressbar"
-                                    style="width: {{ $totalTransactions > 0 ? ($kpi['count'] / $totalTransactions) * 100 : 0 }}%; background-color: {{ $kpi['color'] }};">
+                @foreach($kpi_data as $kpi)
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="card card-kpi p-1 p-md-2 h-100">
+                            <div class="card-body text-center p-2 p-md-3">
+                                <p class="kpi-title mb-1 text-truncate">{{ $kpi['title'] }}</p>
+                                <h2 class="kpi-value mb-2" style="color: {{ $kpi['color'] }};">{{ $kpi['count'] }}</h2>
+                                <div class="progress kpi-progress">
+                                    <div class="progress-bar" role="progressbar"
+                                        style="width: {{ $totalTransactions > 0 ? ($kpi['count'] / $totalTransactions) * 100 : 0 }}%; background-color: {{ $kpi['color'] }};">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
 
         {{-- Filter and Content Section --}}
@@ -257,6 +271,18 @@
                 {{-- Search Filter Form --}}
                 <form method="GET" action="{{ route('transactions.index') }}" class="mb-3 mb-md-4" id="filterForm">
                     <div class="row g-2 align-items-end">
+
+                        <div class="col-12 col-sm-6 col-lg">
+                            <select class="form-select form-select-sm form-select-md-normal" name="status">
+                                <option value="">All Statuses</option>
+                                @foreach(['Pending', 'Assigned', 'In Progress', 'Arrived', 'Completed', 'Rejected'] as $status)
+                                    <option value="{{$status}}" {{ request('status') == $status ? 'selected' : '' }}>
+                                        {{$status}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="col-12 col-sm-6 col-lg">
                             <select class="form-select form-select-sm form-select-md-normal" name="forklift_id">
                                 <option value="">All Forklifts</option>
@@ -302,17 +328,6 @@
                         </div>
 
                         <div class="col-12 col-sm-6 col-lg">
-                            <select class="form-select form-select-sm form-select-md-normal" name="status">
-                                <option value="">All Statuses</option>
-                                @foreach(['Pending', 'Assigned', 'In Progress', 'Arrived', 'Completed', 'Rejected'] as $status)
-                                    <option value="{{$status}}" {{ request('status') == $status ? 'selected' : '' }}>
-                                        {{$status}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-12 col-sm-6 col-lg">
                             <select class="form-select form-select-sm form-select-md-normal" name="driver_rating">
                                 <option value="">Any Rating</option>
                                 @for ($i = 5; $i >= 1; $i--)
@@ -323,29 +338,40 @@
                             </select>
                         </div>
 
-                        <div class="col-12 col-md-auto d-grid">
+                        <div class="col-12 col-sm-6 col-lg">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text text-muted small">From</span>
+                                <input type="date" name="date_from" class="form-control"
+                                    value="{{ request('date_from') }}" title="From Date">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-lg">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text text-muted small">To</span>
+                                <input type="date" name="date_to" class="form-control"
+                                    value="{{ request('date_to') }}" title="To Date">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-auto d-flex gap-1">
                             <button type="submit" class="btn btn-secondary btn-sm btn-md-normal">
                                 <i class="fas fa-search me-1"></i> Search
                             </button>
+                            @if(request()->hasAny(['status', 'forklift_id', 'driver_id', 'warehouse_from', 'warehouse_to', 'driver_rating', 'date_from', 'date_to']))
+                                <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary btn-sm btn-md-normal" title="Reset Filters">
+                                    <i class="fas fa-undo"></i>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </form>
 
-                {{-- Export Section --}}
                 <div class="text-end mb-3">
                     @if(in_array(auth()->user()->role, ['admin', 'checker']))
-                        <form action="{{ route('transactions.export') }}" method="POST" class="d-inline-block w-100 w-md-auto">
-                            @csrf
-                            <input type="hidden" name="forklift_id" value="{{ request('forklift_id') }}">
-                            <input type="hidden" name="driver_id" value="{{ request('driver_id') }}">
-                            <input type="hidden" name="warehouse_from" value="{{ request('warehouse_from') }}">
-                            <input type="hidden" name="warehouse_to" value="{{ request('warehouse_to') }}">
-                            <input type="hidden" name="status" value="{{ request('status') }}">
-                            <input type="hidden" name="driver_rating" value="{{ request('driver_rating') }}">
-                            <button type="submit" class="btn btn-success btn-sm btn-md-normal w-md-auto">
-                                <i class="fas fa-file-excel me-2"></i>Export to Excel
-                            </button>
-                        </form>
+                        <a href="{{ route('transactions.report') }}" class="btn btn-success btn-sm w-md-auto">
+                            <i class="fas fa-file-excel me-2"></i>Search Report / Export
+                        </a>
                     @endif
                 </div>
 

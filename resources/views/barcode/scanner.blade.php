@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>📷 Scan Barcode from Image</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
+
 <body style="text-align:center; padding:20px">
 
   <h2>📷 Upload / Take Photo to Scan Barcode</h2>
@@ -33,4 +35,5 @@
   </script>
 
 </body>
+
 </html>
