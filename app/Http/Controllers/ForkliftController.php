@@ -12,6 +12,9 @@ class ForkliftController extends Controller
     {
         $forklifts = Forklift::paginate(10);
         return view('forklift_management.index', compact('forklifts'));
+
+
+
     }
 
     // แสดงหน้าฟอร์มสร้าง Forklift
@@ -22,17 +25,18 @@ class ForkliftController extends Controller
 
     public function store(Request $request)
     {
-        // Validate ข้อมูลที่ส่งมา
+        // $request->orderBy('created_at', 'DESC');
         $request->validate([
             'model' => 'required',
             'plate_number' => 'required',
+            'type' => 'required|in:Electric (EV),Standard',
             'status' => 'required|in:Active,Maintenance,Inactive',
         ]);
 
-        // สร้าง Forklift ใหม่ในฐานข้อมูล
         Forklift::create([
             'model' => $request->model,
             'plate_number' => $request->plate_number,
+            'type' => $request->type,
             'status' => $request->status,
         ]);
 
@@ -52,12 +56,14 @@ class ForkliftController extends Controller
         $request->validate([
             'model' => 'required',
             'plate_number' => 'required',
+            'type' => 'required|in:Electric (EV),Standard',
             'status' => 'required',
         ]);
 
         $forklift->update([
             'model' => $request->model,
             'plate_number' => $request->plate_number,
+            'type' => $request->type,
             'status' => $request->status,
         ]);
 

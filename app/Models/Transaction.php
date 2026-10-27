@@ -15,21 +15,19 @@ class Transaction extends Model
     protected $keyType = 'int';
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array<int, string>
      */
     protected $fillable = [
-        'forklift_id', 
-        'driver_id', 
-        'warehouse_from', 
-        'warehouse_to', 
+        'forklift_id',
+        'driver_id',
+        'warehouse_from',
+        'warehouse_to',
         'created_by_user_id',
         'status',
         'driver_rating',
         'driver_comment',
         'start_task_image_path',
-        'end_task_image_path',   
+        'end_task_image_path',
         'claimed_at',
         'started_at',
         'arrived_at',
@@ -40,9 +38,7 @@ class Transaction extends Model
     ];
 
     /**
-     * The attributes that should be cast.
-     * This tells Laravel to treat these columns as date/time objects.
-     *
+
      * @var array<string, string>
      */
     protected $casts = [
@@ -76,7 +72,7 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionDetail::class, 'transaction_id');
     }
-    
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by_user_id');

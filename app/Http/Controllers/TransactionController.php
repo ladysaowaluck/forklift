@@ -67,6 +67,7 @@ class TransactionController extends Controller
             'status',
             'date_from',
             'date_to',
+            'transaction_ids',
         ]);
 
         return Excel::download(new TransactionsExport($filters), 'transactions_report.xlsx');
@@ -78,7 +79,11 @@ class TransactionController extends Controller
         $drivers = Driver::all();
         $warehouses = Warehouse::all();
 
-        $query = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo']);
+        // Loading transactions without details, creator, and rejectedBy causes N+1 queries when rendering detail items inside the collapsible row view.
+        //  $query = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo']);
+
+        // Eager load details, creator, and rejectedBy relationships for fast collapsible detail rendering without N+1 query overhead.
+        $query = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo', 'details', 'creator', 'rejectedBy']);
         $query->where('status', '!=', 'Deleted');
 
 
@@ -114,7 +119,10 @@ class TransactionController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
+
         if (auth()->user()->role == 'driver') {
+            $query->whereDate('created_at', today());  // Restrict driver role to today's transactions only (own tasks + available Pending).
+
             $driver = Driver::where('user_id', auth()->id())->first();
 
             if ($driver) {
@@ -129,7 +137,8 @@ class TransactionController extends Controller
 
         if (auth()->user()->role == 'driver') {
             $query->orderByRaw("CASE WHEN status = 'Pending' THEN 1 ELSE 2 END ASC")
-                ->orderBy('created_at', 'ASC');
+                // ->orderBy('created_at', 'ASC');
+                ->orderBy('created_at', 'DESC');
 
             $transactions = $query->paginate(10);
         } else {

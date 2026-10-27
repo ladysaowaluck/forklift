@@ -14,10 +14,14 @@ class Forklift extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'model', 'plate_number', 'status',
+        'model',
+        'plate_number',
+        'type',
+        'status',
     ];
 
     protected $casts = [
         'status' => 'string',
+        'type' => 'string',
     ];
 }

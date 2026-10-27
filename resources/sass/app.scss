@@ -1,8 +1,116 @@
 // Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-// Variables
-@import 'variables';
+@import "@tabler/core/dist/css/tabler.min.css";
+@import "@tabler/icons-webfont/dist/tabler-icons.min.css";
 
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+// Brand customization overrides for Modern-Classic 2026 feel
+:root {
+    --tblr-font-sans-serif: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --tblr-primary: #8B0019;
+    --tblr-primary-rgb: 139, 0, 25;
+    --tblr-primary-fg: #ffffff;
+    --tblr-border-radius: 8px;
+    --tblr-border-radius-sm: 6px;
+    --tblr-border-radius-lg: 12px;
+
+    /* Application status and theme variables preserved for existing views */
+    --color-primary: #ffffff;
+    --color-secondary: #004B8D;
+    --color-arrived: #7CBA4C;
+    --color-success: #198754;
+    --color-warning: #f59e0b;
+    --color-danger: #dc2626;
+    --color-background: #f8fafc;
+    --color-new-item: #B90019;
+    --color-booking: #ea580c;
+    --color-progress: #0284c7;
+    --color-border: #e2e8f0;
+}
+
+body {
+    font-feature-settings: "cv03", "cv04", "cv11";
+    background-color: var(--color-background);
+}
+
+.card-main-content {
+    background-color: #ffffff;
+    border: 1px solid var(--tblr-border-color, #e6e7e9);
+    border-radius: var(--tblr-border-radius, 8px);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+.modern-table thead th {
+    border: 0;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.5rem 1rem;
+}
+
+.modern-table tbody tr {
+    background-color: #ffffff;
+    border-radius: var(--tblr-border-radius, 8px);
+    border: 1px solid var(--tblr-border-color, #e6e7e9);
+    transition: all 0.2s ease-in-out;
+}
+
+.modern-table tbody tr:hover,
+.modern-table tbody tr.clickable-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+    cursor: pointer;
+}
+
+.modern-table tbody td {
+    padding: 0.85rem 1.25rem;
+    vertical-align: middle;
+    border: 0;
+}
+
+.status-badge,
+.role-badge {
+    padding: 0.35em 0.85em;
+    font-size: 0.775rem;
+    font-weight: 700;
+    border-radius: 50rem;
+    color: #ffffff;
+    display: inline-block;
+    letter-spacing: 0.02em;
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 56px;
+    height: 56px;
+    background-color: var(--tblr-primary, #8B0019);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // box-shadow: 0 4px 12px rgba(139, 0, 25, 0.35);
+    box-shadow: 0 4px 12px rgba(19, 0, 105, 0.35);
+    z-index: 1050;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+}
+
+.fab:hover {
+    color: #ffffff;
+    transform: scale(1.08);
+    // box-shadow: 0 6px 16px rgba(139, 0, 25, 0.45);
+    box-shadow: 0 6px 16px rgba(19, 0, 105, 0.45);
+}

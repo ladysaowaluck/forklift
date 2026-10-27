@@ -19,7 +19,7 @@
                                 <select class="form-select form-select-sm form-select-md-normal" id="forklift_id" name="forklift_id" required>
                                     <option value="">เลือก Forklift</option>
                                     @foreach($forklifts as $forklift)
-                                        <option value="{{ $forklift->forklift_id }}" {{ $transaction->forklift_id == $forklift->forklift_id ? 'selected' : '' }}>{{ $forklift->model }}</option>
+                                        <option value="{{ $forklift->forklift_id }}" {{ $transaction->forklift_id == $forklift->forklift_id ? 'selected' : '' }}>{{ $forklift->model }} ({{ $forklift->type ?? 'Standard' }})</option>
                                     @endforeach
                                 </select>
                             </div>

@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- Ensure FontAwesome is loaded for icons --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
     <style>
         :root {
             --color-primary: #ffffff;
@@ -20,7 +17,13 @@
         body {
             background-color: var(--color-background);
             color: #212529;
-            font-size: clamp(0.875rem, 1.5vw, 1rem);
+            font-size: 15px;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
         }
 
         .card-main-content {
@@ -83,7 +86,7 @@
                         {{-- Header --}}
                         <div class="text-center mb-4 mb-md-5">
                             <h1 class="fw-bolder fs-3 fs-md-2" style="color: var(--color-secondary);">
-                                <i class="fas fa-plus-circle me-2"></i>Create New Booking
+                                <i class="ti ti-circle-plus me-2"></i>Create New Booking
                             </h1>
                             <p class="fs-6 fs-md-5 text-muted mb-0">Fill in the details to create a new transaction</p>
                         </div>
@@ -168,14 +171,15 @@
                             {{-- Add Detail Button --}}
                             <div class="d-grid gap-2 mt-3 mt-md-4">
                                 <button type="button" class="btn btn-outline-success btn-sm btn-md-normal" id="add-detail">
-                                    <i class="fas fa-plus me-2"></i>Add Another Item
+                                    <i class="ti ti-plus me-2"></i>Add Another Item
                                 </button>
                             </div>
 
-                            {{-- Submit Button --}}
+                            {{-- Submit Button with harmonious hover color --}}
                             <div class="d-grid gap-2 mt-4 mt-md-5">
-                                <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2"
-                                    style="background-color: var(--color-secondary); border-color: var(--color-primary);">Create Booking</button>
+                                <button type="submit" class="btn btn-action-primary btn-sm btn-md-normal text-white fw-bold py-2">
+                                    <i class="ti ti-device-floppy me-1"></i>Create Booking
+                                </button>
                             </div>
                         </form>
                     </div>

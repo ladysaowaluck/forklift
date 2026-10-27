@@ -1,9 +1,9 @@
+
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -11,160 +11,202 @@
     <title>{{ config('app.name', 'Forklift Tracker') }}</title>
 
     <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    {{-- Font Awesome for Icons (Should be here for all pages) --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <style>
         :root {
-            --color-primary: #ffffff !important;
-            /* Murata Primary Red */
-            --color-secondary: #8B0019;
-            /* Murata Secondary Blue */
-            --color-success: #198754;
-            --color-info: #0070C0;
-            --color-warning: #B90019;
-            --color-inactive: #6c757d;
-            --color-background: #f4f6f9;
-            --color-font: #004B8D;
-            /* Main background color for all pages */
-            --color-border: #e3e6f0;
-            --border-radius-md: 0.75rem;
-            --box-shadow-subtle: 0 2px 6px rgba(0, 0, 0, 0.04);
+            --color-primary: #0054a6;
+            /* Tabler Blue */
+            --color-secondary: #6c7a9c;
+            /* Tabler Slate Muted */
+            --color-success: #2fb344;
+            /* Tabler Green */
+            --color-info: #4299e1;
+            /* Tabler Azure */
+            --color-warning: #f76707;
+            /* Tabler Orange */
+            --color-danger: #d63939;
+            /* Tabler Red */
+            --color-inactive: #94a3b8;
+            /* Tabler Gray */
+            --color-background: #f6f8fb;
+            /* Tabler Cool Off-White */
+            --color-font: #182433;
+            /* Tabler Dark Slate */
+            --color-border: #e6e7e9;
+            /* Tabler 1px Subtle Border */
+            --color-sidebar: #182433;
+            /* Tabler Classic Dark Navy */
+            --border-radius-md: 0.925rem;
+            --box-shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+            --box-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
 
             --topbar-height: 60px;
             --sidebar-width: 250px;
         }
+        html,
+        body {
+            font-size: 15px;
+            -webkit-text-size-adjust: 100%;
+        }
 
         body {
             background-color: var(--color-background);
-            color: #212529;
-            font-size: 16px;
+            color: var(--color-font);
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
             min-width: 320px;
             margin: 0 auto;
+            letter-spacing: -0.01em;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
+
+            .modern-table,
+            .table {
+                font-size: 0.875rem !important;
+            }
+        }
+
+        .btn-action-primary {
+            background-color: #0054a6 !important;
+            border-color: #0054a6 !important;
+            color: #ffffff !important;
+            font-weight: 600;
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-action-primary:hover,
+        .btn-action-primary:focus {
+            background-color: #003d7a !important;
+            border-color: #003870 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 84, 166, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-action-primary:active {
+            background-color: #003366 !important;
+            border-color: #003366 !important;
+            transform: translateY(0);
+            box-shadow: none;
         }
 
         .card-main-content {
             background-color: #ffffff;
             border: 1px solid var(--color-border);
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--box-shadow-subtle);
             border-radius: var(--border-radius-md);
         }
 
         .modern-table {
-            border-collapse: separate;
-            border-spacing: 0 0.75rem;
-            font-size: 1rem;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            letter-spacing: -0.01em;
         }
 
         .modern-table thead th {
-            border: 0;
-            color: #6c757d;
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background-color: #f8fafc;
+            color: #64748b;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.725rem;
             text-transform: uppercase;
-            padding-top: 0;
+            letter-spacing: 0.04em;
+            padding: 0.55rem 0.75rem;
+            border-top: 0;
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: inset 0 -1px 0 var(--color-border);
+            white-space: nowrap;
         }
 
         .modern-table tbody tr {
-            background-color: #fff;
-            border-radius: var(--border-radius-md);
-            box-shadow: var(--box-shadow-subtle);
-            border: 1px solid var(--color-border);
-            transition: all 0.2s ease-out;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background-color 0.15s ease-in-out;
         }
 
         .modern-table tbody tr:hover,
-        .modern-table tbody tr.clickable-row:hover {
-            transform: scale(1.01);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-            z-index: 10;
-            position: relative;
-            cursor: pointer;
-            border-color: var(--color-primary);
+        .modern-table tbody tr.clickable-row:hover,
+        .modern-table tbody tr.transaction-row:hover {
+            background-color: #f8fafc;
         }
 
         .modern-table tbody td {
-            padding: 1rem 1.5rem;
+            padding: 0.55rem 0.75rem;
             vertical-align: middle;
-            border: 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.875rem;
+            color: #1e293b;
         }
 
-        .modern-table tbody td:first-child {
-            border-top-left-radius: var(--border-radius-md);
-            border-bottom-left-radius: var(--border-radius-md);
+        /* High-density numeric alignment for quick scanning */
+        .modern-table th.col-num,
+        .modern-table td.col-num,
+        .modern-table .text-end {
+            text-align: right !important;
+            font-variant-numeric: tabular-nums;
         }
 
-        .modern-table tbody td:last-child {
-            border-top-right-radius: var(--border-radius-md);
-            border-bottom-right-radius: var(--border-radius-md);
+        /* Form input check column density */
+        .modern-table th.col-check,
+        .modern-table td.col-check {
+            width: 38px;
+            text-align: center;
+            padding-left: 0.65rem;
+            padding-right: 0.35rem;
+        }
+
+        .modern-table .form-check-input {
+            cursor: cell;
+            width: 1.05rem;
+            height: 1.05rem;
+            border-color: #cbd5e1;
+            border-radius: 0.25em;
+            /* Forces sharp square corners */
+            -webkit-appearance: none;
+            /* Prevents default browser rendering overrides */
+            appearance: none;
+        }
+
+        .modern-table .form-check-input:checked {
+            background-color: #0054a6;
+            border-color: #0054a6;
+            border-radius: 0.25em;
         }
 
         .status-badge,
         .role-badge {
-            padding: 0.4em 1em;
-            font-size: 0.85rem;
-            font-weight: 700;
+            padding: 0.28em 0.75em;
+            font-size: 0.75rem;
+            font-weight: 600;
             border-radius: 50rem;
             color: #fff;
+            letter-spacing: 0.02em;
+            display: inline-block;
         }
 
-        /* NEW: Custom Navbar Link Styling for Clarity */
-        .navbar-dark .nav-link {
-            color: #ffffff;
-            font-weight: 500;
-            /* Medium weight for better readability */
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .navbar-dark .nav-link:hover {
-            color: #ffffff;
-            background-color: rgba(0, 0, 0, 0.1);
-            /* Subtle background highlight on hover */
-        }
-
-        /* Style for the currently active link */
-        .navbar-dark .nav-link.active {
-            color: #ffffff;
-            font-weight: 700;
-            /* Bolder for active link */
-            background-color: rgba(0, 0, 0, 0.2);
-            /* Darker background for active link */
-        }
-
-        .navbar-logo {
-            height: 40px;
-            width: auto;
-        }
-
-        /* 
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1050;
-            --bs-navbar-padding-y: -0.5rem;
-        } */
-
-        /* 
-        .navbar-dark .navbar-toggler {
-            --bs-navbar-toggler-border-color: rgba(133, 133, 133, 0.6);
-            --bs-navbar-toggler-focus-width: 0.2rem;
-            border-radius: 0.5rem;
-        } */
-
-        .navbar-dark .navbar-toggler-icon {
-            --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23004B8D' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-
-        /* Top bar */
+        /* Topbar height and logo */
         .app-topbar {
             height: var(--topbar-height);
             padding-block: 0;
+            background-color: #ffffff !important;
+            border-bottom: 1px solid var(--color-border) !important;
         }
 
         .navbar-logo {
@@ -172,38 +214,82 @@
             width: auto;
         }
 
-        /* Sidebar / drawer */
+        /* Modern User Profile Pill */
+        .user-avatar-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50rem;
+            background: #f1f5f9;
+            border: 1px solid var(--color-border);
+            color: var(--color-font);
+            text-decoration: none;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .user-avatar-pill:hover,
+        .user-avatar-pill:focus {
+            background: #e2e8f0;
+            color: var(--color-primary);
+        }
+
+        .user-menu-dropdown {
+            min-width: 200px;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+        }
+
         .app-sidebar {
-            /* background-color: color-mix(in srgb, var(--color-primary) 85%, black); */
-            --bs-offcanvas-bg: var(--color-font);
+            --bs-offcanvas-bg: #ffffff;
+            background-color: #ffffff !important;
             display: flex;
             flex-direction: column;
+            border-right: 1px solid var(--color-border);
         }
 
         .app-sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.85);
+            color: #4b5563;
             font-weight: 500;
-            padding: 0.65rem 1rem;
+            font-size: 0.875rem;
+            padding: 0.55rem 0.85rem;
             border-radius: 0.5rem;
-            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            transition: all 0.15s ease-in-out;
         }
 
         .app-sidebar .nav-link:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
+            color: #111827;
+            background-color: #f1f5f9;
         }
 
         .app-sidebar .nav-link.active {
-            color: #fff;
-            font-weight: 700;
-            background-color: rgba(255, 255, 255, 0.2);
+            color: #0054a6;
+            font-weight: 600;
+            background-color: #e8f1fa;
+        }
+
+        /* Gemini : Increase sidebar icon size and set vertical alignment for better visual hierarchy and readability */
+        .app-sidebar .nav-link i {
+            font-size: 1.35rem;
+            line-height: 1;
+            vertical-align: middle;
+            color: #64748b;
+            transition: color 0.15s ease-in-out;
+        }
+
+        .app-sidebar .nav-link:hover i,
+        .app-sidebar .nav-link.active i {
+            color: #0054a6;
         }
 
         .offcanvas-lg {
-            background-color: #004B8D;
+            background-color: #ffffff;
         }
 
-        /* DESKTOP (>= 992px): fixed sidebar under the top bar, content pushed right */
+        /* DESKTOP (>= 992px): Fixed minimal sidebar below topbar */
         @media (min-width: 992px) {
             .app-sidebar {
                 position: fixed;
@@ -212,7 +298,9 @@
                 left: 0;
                 width: var(--sidebar-width);
                 overflow-y: auto;
-                background-color: color-mix(in srgb, var(--color-font) 85%, black) !important;
+                background-color: #ffffff !important;
+                border-right: 1px solid var(--color-border);
+                z-index: 1020;
             }
 
             .app-content {
@@ -220,116 +308,18 @@
             }
         }
 
-        /* MOBILE (< 992px): drawer width */
+        /* MOBILE (< 992px): Drawer width */
         @media (max-width: 991.98px) {
             .app-sidebar {
                 --bs-offcanvas-width: 280px;
             }
         }
 
-        .sidebar-body {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1 !important;
-            overflow-y: auto;
-        }
-
         .sidebar-credit {
-            color: rgba(255, 255, 255, 0.55);
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            color: #94a3b8;
+            border-top: 1px solid var(--color-border);
             letter-spacing: 0.02em;
-        }
-
-        /* .user-account {
-            color: #004B8D;
-            padding: 0.65rem 1rem;
-            background-color: color-mix(in srgb, var(--color-font) 85%, black) !important;
-        } */
-
-        .user-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.35rem 0.75rem;
-            color: #004B8D;
-            text-decoration: none;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 50rem;
-            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .user-toggle:hover,
-        .user-toggle:focus-visible,
-        .user-toggle.show {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.7);
-        }
-
-        .user-toggle:focus-visible {
-            outline: 0;
-            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
-        }
-
-        .user-account {
-            color: #004B8D;
-        }
-
-        /* Truncate long names */
-        .user-name {
-            max-width: 120px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* Dropdown menu */
-        .user-menu {
-            min-width: 200px;
-            margin-top: 0.5rem !important;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 0.75rem;
-            overflow: hidden;
-            padding: 0;
-        }
-
-        .user-menu-header {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .user-menu .dropdown-item {
-            padding: 0.65rem 1rem;
-            transition: background-color 0.15s ease, padding-left 0.15s ease;
-        }
-
-        .user-menu .dropdown-item:hover,
-        .user-menu .dropdown-item:focus {
-            background-color: rgba(255, 255, 255, 0.12);
-            padding-left: 1.25rem;
-            /* small slide effect on hover */
-        }
-
-        /* Phones: icon-only round button, bigger tap target */
-        @media (max-width: 575.98px) {
-            .user-toggle {
-                padding: 0.4rem 0.6rem;
-            }
-
-            .user-toggle.dropdown-toggle::after {
-                display: none;
-                /* hide the caret to save space */
-            }
-        }
-
-        /* Larger screens: allow longer names */
-        @media (min-width: 992px) {
-            .user-name {
-                max-width: 200px;
-            }
-        }
-
-        .fa-lg {
-            font-size: 1.75em;
+            padding: 0.85rem 0;
         }
 
         .app-container {
@@ -343,77 +333,85 @@
     <div class="app-container">
         <div id="app">
 
-            <!-- TOP BAR: always visible (desktop + mobile) -->
-            <nav class="navbar navbar-dark sticky-top shadow-sm app-topbar"
-                style="background-color: var(--color-primary);">
+            <!-- TOP BAR: Single modern navbar retained from this version -->
+            <nav class="navbar navbar-expand-md sticky-top bg-white border-bottom shadow-sm app-topbar">
                 <div class="container-fluid px-3 px-lg-4">
 
                     <div class="d-flex align-items-center">
-                        <!-- Only render mobile navigation toggler for Admin users -->
                         @auth
-                            @if(Auth::user()->isAdmin())
-                                <!-- Toggler: visible on mobile only -->
-                                <button class="navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
-                                    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
+                            @if(in_array(strtolower(Auth::user()->role ?? ''), ['admin', 'checker']))
+                                <!-- Toggler: visible on mobile only, opens classic sidebar drawer -->
+                                <button class="navbar-toggler d-lg-none me-2 border-0 p-1" type="button"
+                                    data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
                                     aria-label="{{ __('Toggle navigation') }}">
-                                    <span class="navbar-toggler-icon"></span>
+                                    <i class="ti ti-menu-2 fs-4 text-dark"></i>
                                 </button>
                             @endif
                         @endauth
 
-                        <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center m-0"
+                        <a class="navbar-brand fw-bolder fs-4 d-flex align-items-center m-0 text-dark text-decoration-none"
                             href="{{ url('/transactions') }}">
-                            <!-- Logo_Nissin.png -->
-                            <img src="{{ asset('images/ForkLifting.jpg') }}" alt="Siam Nistran Logo"
-                                class="navbar-logo me-2">
+                            <img src="{{ asset('images/ForkLifting.jpg') }}" alt="Logo" class="navbar-logo me-2">
                             <span class="d-none d-sm-inline">{{ config('app.name', 'Forklift Tracker') }}</span>
                         </a>
                     </div>
 
-                    @auth
-                        <!-- User dropdown (top right, desktop + mobile) -->
-                        <div class="dropdown" data-bs-theme="dark">
-                            <a id="navbarDropdown"
-                                class="user-account text-decoration-none dropdown-toggle d-flex align-items-center" href="#"
-                                role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                <i class="fas fa-user-circle fa-lg me-2"></i>
-                                <span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-end user-menu shadow" aria-labelledby="navbarDropdown">
-                                <!-- <a class="dropdown-item" href="{{ route('logout') }}"
-                                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                                    <i class="fas fa-sign-out-alt me-2"></i>{{ __('Logout') }}
-                                                                </a> -->
-                                <div class="user-menu-header px-3 py-2">
-                                    <div class="fw-semibold text-truncate">{{ Auth::user()->name }}</div>
-                                    <div class="small text-body-secondary text-capitalize">{{ Auth::user()->role }}</div>
-                                </div>
-                                <hr class="dropdown-divider">
-
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-sign-out-alt fa-fw me-2"></i>{{ __('Logout') }}
+                    <!-- Right-side User Menu -->
+                    <div class="navbar-nav flex-row ms-auto align-items-center">
+                        @auth
+                            <div class="nav-item dropdown">
+                                <a id="navbarDropdown" class="user-avatar-pill dropdown-toggle text-decoration-none"
+                                    href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span
+                                        class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center me-2"
+                                        style="width: 28px; height: 28px; font-size: 0.85rem;">
+                                        <i class="ti ti-user"></i>
+                                    </span>
+                                    <div class="d-none d-sm-block text-start lh-1 me-1">
+                                        <div class="fw-semibold text-dark text-truncate" style="max-width: 140px;">
+                                            {{ Auth::user()->name }}
+                                        </div>
+                                        <div class="text-muted text-capitalize" style="font-size: 0.725rem;">
+                                            {{ Auth::user()->role }}
+                                        </div>
+                                    </div>
                                 </a>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
+                                <div class="dropdown-menu dropdown-menu-end user-menu-dropdown shadow mt-2 p-0"
+                                    aria-labelledby="navbarDropdown">
+                                    <div class="px-3 py-2 bg-light border-bottom">
+                                        <div class="fw-bold text-dark text-truncate">{{ Auth::user()->name }}</div>
+                                        <div class="small text-muted text-capitalize">{{ Auth::user()->role }}</div>
+                                    </div>
+
+                                    <a class="dropdown-item text-danger py-2 px-3" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="ti ti-logout me-2"></i>{{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    @endauth
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm">Login</a>
+                        @endauth
+                    </div>
                 </div>
             </nav>
 
-            <!-- MENU: sidebar on desktop, slide-in drawer on mobile (Admin only) -->
-            <!-- Display sidebar navigation exclusively for Admin users -->
             @auth
-                @if(Auth::user()->isAdmin())
-                    <div class="offcanvas-lg offcanvas-start app-sidebar" tabindex="-1" id="sidebarMenu" data-bs-theme="dark">
+                @if(in_array(strtolower(Auth::user()->role ?? ''), ['admin', 'checker']))
+                    <!-- Minimal-clean sidebar container and offcanvas header -->
+                    <div class="offcanvas-lg offcanvas-start app-sidebar shadow-sm" tabindex="-1" id="sidebarMenu">
 
-                        <div class="offcanvas-header">
-                            <!-- <img src="{{ asset('images/SNC_logo_white.png') }}" alt="Company Logo" class="login-logo mb-3 mb-md-4"> -->
-                            <h5 class="offcanvas-title">{{ config('app.name', 'Forklift Tracker') }}</h5>
+                        <div class="offcanvas-header border-bottom py-3">
+                            <h5 class="offcanvas-title text-dark fw-bold d-flex align-items-center mb-0">
+                                <img src="{{ asset('images/ForkLifting.jpg') }}" alt="Logo" class="rounded me-2"
+                                    style="max-height: 28px;">
+                                <span class="fs-6">{{ config('app.name', 'Forklift Tracker') }}</span>
+                            </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
                                 aria-label="Close"></button>
                         </div>
@@ -421,29 +419,46 @@
                         <div class="offcanvas-body p-3">
                             <ul class="nav nav-pills flex-column gap-1 w-100">
                                 <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('dashboard*') ? 'active' : '' }}"
+                                        href="{{ route('dashboard') }}">
+                                        <i class="ti ti-layout-dashboard me-2"></i>Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link {{ request()->is('transactions*') ? 'active' : '' }}"
                                         href="{{ route('transactions.index') }}">
-                                        <i class="fas fa-calendar-check fa-fw me-2"></i>Bookings
+                                        <i class="ti ti-calendar-event me-2"></i>Bookings
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->is('warehouses*') || request()->is('warehouse-management*') ? 'active' : '' }}"
-                                        href="{{ route('warehouse.management') }}">
-                                        <i class="fas fa-warehouse fa-fw me-2"></i>{{ __('Warehouses') }}
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->is('forklifts*') || request()->is('forklift-management*') ? 'active' : '' }}"
-                                        href="{{ route('forklift.management') }}">
-                                        <i class="fas fa-truck-moving fa-fw me-2"></i>{{ __('Forklifts') }}
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link {{ request()->is('user-management*') ? 'active' : '' }}"
-                                        href="{{ route('user.management') }}">
-                                        <i class="fas fa-users fa-fw me-2"></i>{{ __('Users') }}
-                                    </a>
-                                </li>
+
+                                {{-- Admin-only management links --}}
+                                @if(Auth::user()->isAdmin())
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ (request()->is('warehouse*') || request()->is('warehouses*') || request()->is('warehouse-management*')) && !request()->is('warehouse-routes*') ? 'active' : '' }}"
+                                            href="{{ route('warehouse.management') }}">
+                                            <i class="ti ti-building-warehouse me-2"></i>{{ __('Warehouses') }}
+                                        </a>
+                                    </li>
+                                    <!-- Sub-button under Warehouses for Routes & Distance management -->
+                                    <li class="nav-item ms-3">
+                                        <a class="nav-link py-1 {{ request()->is('warehouse-routes*') ? 'active text-primary fw-bold' : 'text-muted' }}"
+                                            href="{{ route('warehouse.routes.index') }}" style="font-size: 0.82rem;">
+                                            <i class="ti ti-route me-1"></i>{{ __('Routes & Distance') }}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->is('forklift*') || request()->is('forklifts*') || request()->is('forklift-management*') ? 'active' : '' }}"
+                                            href="{{ route('forklift.management') }}">
+                                            <i class="ti ti-forklift me-2"></i>{{ __('Forklifts') }}
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ request()->is('user-management*') ? 'active' : '' }}"
+                                            href="{{ route('user.management') }}">
+                                            <i class="ti ti-users me-2"></i>{{ __('Users') }}
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
 
@@ -455,13 +470,12 @@
                 @endif
             @endauth
 
-            <!-- PAGE CONTENT -->
-            <main class="{{ Auth::check() && Auth::user()->isAdmin() ? 'app-content' : '' }}">
+            <main
+                class="{{ Auth::check() && in_array(strtolower(Auth::user()->role ?? ''), ['admin', 'checker']) ? 'app-content' : '' }}">
                 @yield('content')
             </main>
         </div>
     </div>
-
 
 </body>
 

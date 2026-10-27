@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
+use App\Models\WarehouseRoute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class WarehouseController extends Controller
 {
     public function index()
     {
-        $warehouses = Warehouse::all();
         $warehouses = Warehouse::paginate(10);
-        return view('warehouse_management.index', compact('warehouses'));
+        $allWarehouses = Warehouse::orderBy('name')->get();
+        $routes = Schema::hasTable('routes')
+            ? WarehouseRoute::with(['originWarehouse', 'destWarehouse'])->orderBy('route_id', 'desc')->get()
+            : collect();
+        return view('warehouse_management.index', compact('warehouses', 'allWarehouses', 'routes'));
     }
 
     public function create()

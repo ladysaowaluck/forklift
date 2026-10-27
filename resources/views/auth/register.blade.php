@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('content')=
+@section('content')
     <div class="register-container d-flex align-items-center justify-content-center min-vh-100 py-3 py-md-5 px-2 px-md-3">
-        <div class="register-card card shadow-lg">=
+        <div class="register-card card shadow-lg">
             <div class="card-body p-3 p-sm-4 p-md-5 text-center">
 
                 <img src="{{ asset('images/logo.png') }}" alt="Company Logo" class="register-logo mb-3 mb-md-4">
-                =
+
                 <h2 class="fw-bolder fs-3 fs-md-2" style="color: var(--color-secondary);">Create an Account</h2>
                 <p class="text-muted small fs-md-6 mb-3 mb-md-4">Sign up to get started</p>
 
@@ -118,10 +118,9 @@
                     </div>
 
                     {{-- Register Button --}}
-                    <div class="d-grid mt-3 mt-md-4">=
-                        <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2"
-                            style="background-color: var(--color-secondary); border-color: var(--color-primary);">
-                            <i class="fas fa-user-plus me-2"></i>Register
+                    <div class="d-grid mt-3 mt-md-4">
+                        <button type="submit" class="btn btn-action-primary btn-sm btn-md-normal fw-bold py-2">
+                            <i class="ti ti-user-plus me-2"></i>Register
                         </button>
                     </div>
                 </form>
@@ -151,7 +150,13 @@
         body {
             background: url('{{ asset('images/siam-nistran.jpg') }}') no-repeat center center fixed;
             background-size: cover;
-            font-size: clamp(0.875rem, 1.5vw, 1rem);
+            font-size: 15px;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
         }
 
         .register-card {

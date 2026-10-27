@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseRouteController;
 use App\Http\Controllers\ForkliftController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -16,9 +18,6 @@ use App\Http\Controllers\AdminController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
-
-// Redirect /dashboard to /transactions to prevent 404 errors for existing bookmarks and legacy links without impacting other pages.
-Route::redirect('/dashboard', '/transactions');
 
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.submit');
@@ -36,26 +35,29 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-// Warehouse Management
-Route::get('/warehouse-management', [WarehouseController::class, 'index'])->name('warehouse.management');
-Route::get('/warehouse-management-list', [WarehouseController::class, 'warehouseIndex'])->name('warehouse.management.list');
-
-// Forklift Management
-Route::get('/forklift-management', [ForkliftController::class, 'index'])->name('forklift.management');
-Route::get('/forklift-management-list', [ForkliftController::class, 'forkliftIndex'])->name('forklift.management.list');
-
-// Routes for creating and editing entities
 Route::middleware(['auth'])->group(function () {
-
     // Warehouse Management
+    Route::get('/warehouse-management', [WarehouseController::class, 'index'])->name('warehouse.management');
+    Route::get('/warehouse-management-list', [WarehouseController::class, 'warehouseIndex'])->name('warehouse.management.list');
+    Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
+    Route::get('/warehouse', [WarehouseController::class, 'index']);
     Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create');
     Route::post('/warehouses', [WarehouseController::class, 'store'])->name('warehouses.store');
     Route::get('/warehouses/{id}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit');
     Route::put('/warehouses/{id}', [WarehouseController::class, 'update'])->name('warehouses.update');
     Route::delete('/warehouses/{id}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
-    Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
+
+    // Warehouse Route Distance & CO2 Management
+    Route::get('/warehouse-routes', [WarehouseRouteController::class, 'index'])->name('warehouse.routes.index');
+    Route::post('/warehouse-routes', [WarehouseRouteController::class, 'store'])->name('warehouse.routes.store');
+    Route::put('/warehouse-routes/{id}', [WarehouseRouteController::class, 'update'])->name('warehouse.routes.update');
+    Route::delete('/warehouse-routes/{id}', [WarehouseRouteController::class, 'destroy'])->name('warehouse.routes.destroy');
 
     // Forklift Management
+    Route::get('/forklift-management', [ForkliftController::class, 'index'])->name('forklift.management');
+    Route::get('/forklift-management-list', [ForkliftController::class, 'forkliftIndex'])->name('forklift.management.list');
+    Route::get('/forklift', [ForkliftController::class, 'index'])->name('forklift.index');
+    Route::get('/forklifts', [ForkliftController::class, 'index'])->name('forklifts.index');
     Route::get('/forklifts/create', [ForkliftController::class, 'create'])->name('forklifts.create');
     Route::post('/forklifts', [ForkliftController::class, 'store'])->name('forklifts.store');
     Route::get('/forklifts/{forklift_id}/edit', [ForkliftController::class, 'edit'])->name('forklifts.edit');
@@ -66,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
 
 // --- ส่วนจัดการ Transaction (รวมฟังก์ชัน Reject และแก้ไขรูปภาพ) ---
 Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');

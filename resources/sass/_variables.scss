@@ -1,8 +1,29 @@
-// Body
-$body-bg: #f8fafc;
+// Body & Surface
+$body-bg: #f6f8fb;
+$body-color: #182433;
+
+// Tabler Modern Palette
+$primary: #0054a6;
+$secondary: #6c7a9c;
+$success: #2fb344;
+$info: #4299e1;
+$warning: #f76707;
+$danger: #d63939;
+$light: #f6f8fb;
+$dark: #182433;
+
+// Borders & Radii
+$border-color: #e6e7e9;
+$border-radius: 0.5rem;
+$border-radius-sm: 0.375rem;
+$border-radius-lg: 0.75rem;
 
 // Typography
-// $font-family-sans-serif: 'Nunito', sans-serif;
-$font-family-sans-serif: 'Nunito', sans-serif;
-$font-size-base: 0.9rem;
-$line-height-base: 1.6;
+$font-family-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+$font-size-base: 0.925rem;
+$line-height-base: 1.5;
+
+// Form Inputs
+$input-border-color: #dce1e7;
+$input-focus-border-color: #206bc4;
+$input-focus-box-shadow: 0 0 0 0.2rem rgba(32, 107, 196, 0.15);

@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- Ensure FontAwesome is loaded for icons --}}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
 <style>
     :root {
         --color-primary: #ffffff;
@@ -15,7 +12,12 @@
     body {
         background-color: var(--color-background);
         color: #212529;
-        font-size: clamp(0.875rem, 1.5vw, 1rem);
+        font-size: 15px;
+    }
+    @media (max-width: 767.98px) {
+        body {
+            font-size: 15px !important;
+        }
     }
     .card-main-content {
         background-color: #ffffff;
@@ -64,7 +66,7 @@
 
                     <div class="text-center mb-3 mb-md-4">
                         <h1 class="fw-bolder fs-3 fs-md-2" style="color: var(--color-secondary);">
-                            <i class="fas fa-user-edit me-2"></i>Edit User
+                            <i class="ti ti-user-edit me-2"></i>Edit User
                         </h1>
                         <p class="fs-6 fs-md-5 text-muted mb-0">Update profile for: <span class="fw-bold">{{ $user->name }}</span></p>
                     </div>
@@ -149,18 +151,17 @@
                             </div>
                         </div>
 
-                        {{-- Buttons --}}
+                        {{-- Buttons with harmonious hover color --}}
                         <div class="d-grid gap-2 mt-3 mt-md-4">
-                            <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2" 
-                                style="background-color: var(--color-secondary); border-color: var(--color-primary);">
-                                <i class="fas fa-save me-2"></i>Update User
+                            <button type="submit" class="btn btn-action-primary btn-sm btn-md-normal text-white fw-bold py-2">
+                                <i class="ti ti-device-floppy me-2"></i>Update User
                             </button>
                         </div>
                     </form>
 
                     <div class="text-center mt-3 mt-md-4">
                         <a href="{{ route('user.management') }}" class="btn btn-link btn-sm text-secondary text-decoration-none">
-                            <i class="fas fa-arrow-left me-1"></i>Back to User List
+                            <i class="ti ti-arrow-left me-1"></i>Back to User List
                         </a>
                     </div>
                 </div>

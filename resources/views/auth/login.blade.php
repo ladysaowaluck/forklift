@@ -13,9 +13,9 @@
                 <form method="POST" action="{{ route('login') }}" novalidate>
                     @csrf
 
-                    <!-- {{-- Email Input --}} -->
+                    <!--Email Input  -->
                     <div class="input-group has-validation mb-3">
-                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <span class="input-group-text"><i class="ti ti-mail"></i></span>
                         <input id="email" type="email" name="email" value="{{ old('email') }}"
                             class="form-control @error('email') is-invalid @enderror" placeholder="Email address"
                             aria-label="Email address" required autocomplete="email" autofocus>
@@ -24,21 +24,21 @@
                         @enderror
                     </div>
 
-                    <!-- {{-- Password Input --}} -->
+                    <!-- Password Input -->
                     <div class="input-group has-validation mb-3">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <span class="input-group-text"><i class="ti ti-lock"></i></span>
                         <input id="password" type="password" name="password"
                             class="form-control @error('password') is-invalid @enderror" placeholder="Password"
                             aria-label="Password" required autocomplete="current-password">
                         {{-- <button class="btn btn-toggle-pw" type="button" id="togglePassword" aria-label="Show password">
-                            <i class="fas fa-eye"></i>
+                            <i class="ti ti-eye"></i>
                         </button> --}}
                         @error('password')
                             <div class="invalid-feedback text-start">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- {{-- Remember Me & Forgot Password --}} -->
+                    <!-- Remember Me & Forgot Password  -->
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
                         <div class="form-check text-start">
                             <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
@@ -53,7 +53,7 @@
                     <!-- {{-- Login Button --}} -->
                     <div class="d-grid">
                         <button type="submit" class="btn btn-login btn-lg fw-bold">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                            <i class="ti ti-login me-2"></i>Login
                         </button>
                     </div>
                 </form>
@@ -76,11 +76,11 @@
                         <div class="w-100 text-center pt-3">
                             <div class="error-icon-wrap mb-2">
                                 @if (session('login_error_type') === 'user_not_found')
-                                    <i class="fas fa-user-slash fa-2x text-warning"></i>
+                                    <i class="ti ti-user-off fs-1 text-warning"></i>
                                 @elseif (session('login_error_type') === 'db_error')
-                                    <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                                    <i class="ti ti-alert-triangle fs-1 text-warning"></i>
                                 @else
-                                    <i class="fas fa-lock fa-2x text-danger"></i>
+                                    <i class="ti ti-lock fs-1 text-danger"></i>
                                 @endif
                             </div>
                             <h5 class="modal-title fw-bold" id="loginErrorModalLabel">
@@ -122,8 +122,8 @@
                 const icon = this.querySelector('i');
                 const show = input.type === 'password';
                 input.type = show ? 'text' : 'password';
-                icon.classList.toggle('fa-eye', !show);
-                icon.classList.toggle('fa-eye-slash', show);
+                icon.classList.toggle('ti-eye', !show);
+                icon.classList.toggle('ti-eye-off', show);
                 this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
             });
         }
@@ -172,7 +172,13 @@
         body {
             background: url('{{ asset('images/siam-nistran.jpg') }}') no-repeat center center fixed;
             background-size: cover;
-            font-size: clamp(0.875rem, 1.5vw, 1rem);
+            font-size: 15px;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
         }
 
         .login-card {

@@ -8,7 +8,7 @@
     <title>Live Monitor</title>
 
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -33,8 +33,14 @@
             background-color: var(--color-background);
             color: var(--color-text-primary);
             font-family: 'Roboto Mono', monospace;
-            font-size: clamp(0.875rem, 1.5vw, 1rem);
+            font-size: 15px;
             overflow-x: hidden;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
         }
 
         .monitor-header {
@@ -129,7 +135,7 @@
 
         .status-Assigned {
             background-color: var(--color-primary);
-            color: #000;
+            color: #ffffffff;
         }
 
         .status-In-Progress,
@@ -166,7 +172,7 @@
             <div
                 class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
                 <h1 class="fs-2 fs-md-1 fw-bolder monitor-header mb-0">
-                    <i class="fas fa-satellite-dish"></i> Live Monitor
+                    <i class="ti ti-broadcast"></i> Live Monitor
                 </h1>
                 <div class="text-start text-md-end">
                     <span id="clock" class="fs-5 fs-md-4 fw-bold"></span>
@@ -211,8 +217,7 @@
                         const statusClass = `status-${task.status.replace(/\s+/g, '-')}`;
                         const from = task.warehouse_from ? task.warehouse_from.name : 'N/A';
                         const to = task.warehouse_to ? task.warehouse_to.name : 'N/A';
-                        const driver = task.driver ? task.driver.name : 'Unassigned';
-                        const forklift = task.forklift ? task.forklift.model : 'N/A';
+                        const forklift = task.forklift ? `${task.forklift.model}${task.forklift.type ? ` (${task.forklift.type})` : ''}` : 'N/A';
 
                         return `
                     <tr id="task-${task.transaction_id}">

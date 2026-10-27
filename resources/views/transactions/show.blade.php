@@ -1,9 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- Ensure FontAwesome is loaded for icons --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
     <style>
         :root {
             --color-primary: #ffffff;
@@ -21,6 +18,13 @@
         body {
             background-color: var(--color-background);
             color: #212529;
+            font-size: 15px;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
         }
 
         .card-main-content {
@@ -165,11 +169,10 @@
                 </div>
                 <hr class="my-3 my-md-4">
 
-
                 <div class="row g-3 g-md-4 mb-4 mb-md-5 fs-6 fs-md-5">
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
-                            <i class="fas fa-calendar-alt fa-fw me-2 text-muted"></i>
+                            <i class="ti ti-calendar me-2 text-muted"></i>
                             Booked Date/Time:
                             <span
                                 class="fw-normal d-block d-sm-inline">{{ $transaction->created_at->format('d M Y H:i:s') ?? 'N/A' }}</span>
@@ -178,7 +181,7 @@
 
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
-                            <i class="fas fa-user-circle fa-fw me-2 text-muted"></i>
+                            <i class="ti ti-user-circle me-2 text-muted"></i>
                             Booked By:
                             <span class="fw-normal d-block d-sm-inline">{{ $transaction->creator->name ?? 'N/A' }}</span>
                         </div>
@@ -186,15 +189,20 @@
 
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
-                            <i class="fas fa-truck fa-fw me-2 text-muted"></i>
+                            <i class="ti ti-truck me-2 text-muted"></i>
                             Forklift:
-                            <span class="fw-normal d-block d-sm-inline">{{ $transaction->forklift->model ?? 'N/A' }}</span>
+                            <span class="fw-normal d-block d-sm-inline">
+                                {{ $transaction->forklift->model ?? 'N/A' }}
+                                @if(!empty($transaction->forklift->type))
+                                    <span class="badge bg-light text-dark border ms-1">{{ $transaction->forklift->type }}</span>
+                                @endif
+                            </span>
                         </div>
                     </div>
 
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
-                            <i class="fas fa-user-tie fa-fw me-2 text-muted"></i>
+                            <i class="ti ti-user me-2 text-muted"></i>
                             Driver:
                             <span class="fw-normal d-block d-sm-inline">{{ $transaction->driver->name ?? 'N/A' }}</span>
                         </div>
@@ -202,7 +210,7 @@
 
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
-                            <i class="fas fa-warehouse fa-fw me-2 text-muted"></i>
+                            <i class="ti ti-building-warehouse me-2 text-muted"></i>
                             From:
                             <span
                                 class="fw-normal d-block d-sm-inline">{{ $transaction->warehouseFrom->name ?? 'N/A' }}</span>
@@ -211,7 +219,7 @@
 
                     <div class="col-12 col-md-6">
                         <div class="fw-bold">
-                            <i class="fas fa-dolly fa-fw me-2 text-muted"></i>
+                            <i class="ti ti-package me-2 text-muted"></i>
                             To:
                             <span
                                 class="fw-normal d-block d-sm-inline">{{ $transaction->warehouseTo->name ?? 'N/A' }}</span>
@@ -222,7 +230,7 @@
                 {{-- Rejection Alert --}}
                 @if($transaction->status == 'Rejected')
                     <div class="alert alert-danger mt-3 mt-md-4 border-start border-5 border-danger shadow-sm">
-                        <h5 class="fw-bold"><i class="fas fa-times-circle me-2"></i>Task Rejected</h5>
+                        <h5 class="fw-bold"><i class="ti ti-circle-x me-2"></i>Task Rejected</h5>
                         <p class="mb-1"><strong>Reason:</strong> {{ $transaction->rejection_reason }}</p>
                         <p class="mb-1">
                             <strong>Rejected By:</strong>
@@ -270,18 +278,18 @@
                                     <select name="forklift_id" class="form-select" required>
                                         <option value="" disabled selected>-- Your available forklifts --</option>
                                         @foreach ($forklifts as $forklift)
-                                            <option value="{{ $forklift->forklift_id }}">{{ $forklift->model }}</option>
+                                            <option value="{{ $forklift->forklift_id }}">{{ $forklift->model }} ({{ $forklift->type ?? 'Standard' }})</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
                                     <button type="submit" class="btn text-white w-100 w-sm-auto"
                                         style="background-color: var(--color-secondary);">
-                                        <i class="fas fa-hand-paper me-2"></i>Claim Task
+                                        <i class="ti ti-hand-stop me-2"></i>Claim Task
                                     </button>
                                     <button type="button" class="btn btn-outline-danger w-100 w-sm-auto" data-bs-toggle="modal"
                                         data-bs-target="#rejectTaskModal">
-                                        <i class="fas fa-times me-2"></i>Reject Task
+                                        <i class="ti ti-x me-2"></i>Reject Task
                                     </button>
                                 </div>
                             </form>
@@ -295,11 +303,11 @@
                         <button type="button" class="btn text-white w-100 w-sm-auto"
                             style="background-color: var(--color-secondary);" data-bs-toggle="modal"
                             data-bs-target="#startTaskModal">
-                            <i class="fas fa-play me-2"></i>Start Task
+                            <i class="ti ti-player-play me-2"></i>Start Task
                         </button>
                         <button type="button" class="btn btn-outline-danger w-100 w-sm-auto" data-bs-toggle="modal"
                             data-bs-target="#rejectTaskModal">
-                            <i class="fas fa-times me-2"></i>Reject Task
+                            <i class="ti ti-x me-2"></i>Reject Task
                         </button>
                     @endif
 
@@ -308,7 +316,7 @@
                         <button type="button" class="btn text-white w-100 w-sm-auto"
                             style="background-color: var(--color-arrived);" data-bs-toggle="modal"
                             data-bs-target="#arriveTaskModal">
-                            <i class="fas fa-map-marker-alt me-2"></i>Mark as Arrived
+                            <i class="ti ti-map-pin me-2"></i>Mark as Arrived
                         </button>
                     @endif
 
@@ -317,7 +325,7 @@
                         <button type="button" class="btn text-white w-100 w-sm-auto"
                             style="background-color: var(--color-secondary);" data-bs-toggle="modal"
                             data-bs-target="#ratingModal">
-                            <i class="fas fa-clipboard-check me-2"></i>Confirm & Rate Driver
+                            <i class="ti ti-clipboard-check me-2"></i>Confirm & Rate Driver
                         </button>
                     @endif
                 </div>
@@ -336,7 +344,7 @@
                                         @if(auth()->user()->role == 'driver' && in_array($transaction->status, ['Assigned', 'In Progress', 'Arrived']) && $transaction->driver->user_id == auth()->id())
                                             <button class="btn btn-sm btn-danger btn-edit-image" data-bs-toggle="modal"
                                                 data-bs-target="#editStartImageModal">
-                                                <i class="fas fa-edit me-1"></i> Edit
+                                                <i class="ti ti-edit me-1"></i> Edit
                                             </button>
                                         @endif
 
@@ -357,7 +365,7 @@
                                         @if(auth()->user()->role == 'driver' && $transaction->status == 'Arrived' && $transaction->driver->user_id == auth()->id())
                                             <button class="btn btn-sm btn-danger btn-edit-image" data-bs-toggle="modal"
                                                 data-bs-target="#editEndImageModal">
-                                                <i class="fas fa-edit me-1"></i> Edit
+                                                <i class="ti ti-edit me-1"></i> Edit
                                             </button>
                                         @endif
 
@@ -375,11 +383,11 @@
                 {{-- Booking Items Table and Footer Buttons --}}
                 <h5 class="fw-bold mt-4 mt-md-5">Booking Items</h5>
                 <div class="table-responsive">
-                    <table class="table mb-0 table-hover align-middle small">
-                        <thead class="table-light">
+                    <table class="table mb-0 modern-table align-middle">
+                        <thead>
                             <tr>
                                 <th>Item Name</th>
-                                <th>Quantity</th>
+                                <th class="text-end">Quantity</th>
                                 <th>Unit</th>
                                 <th>Description</th>
                             </tr>
@@ -388,7 +396,7 @@
                             @foreach($transaction->details as $detail)
                                 <tr>
                                     <td class="fw-medium">{{ $detail->item_name }}</td>
-                                    <td>{{ $detail->quantity }}</td>
+                                    <td class="text-end col-num fw-semibold">{{ $detail->quantity }}</td>
                                     <td>{{ $detail->unit }}</td>
                                     <td>{{ $detail->description ?? 'N/A' }}</td>
                                 </tr>
@@ -399,7 +407,7 @@
                 <hr class="my-3 my-md-4">
                 <div class="d-flex flex-column flex-sm-row justify-content-between gap-2 mt-3 mt-md-4">
                     <a href="{{ route('transactions.index') }}" class="btn btn-outline-secondary w-100 w-sm-auto">
-                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                        <i class="ti ti-arrow-left me-2"></i>Back to List
                     </a>
 
                     @if(auth()->user()->role == 'admin')
@@ -408,7 +416,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash-alt me-2"></i>Delete Transaction
+                                <i class="ti ti-trash me-2"></i>Delete Transaction
                             </button>
                         </form>
                     @endif
@@ -458,7 +466,7 @@
                         <input type="file" name="start_task_image" id="start_task_image_input" class="file-input-hidden"
                             accept="image/*" capture="environment" required>
                         <label for="start_task_image_input" class="file-input-label">
-                            <i class="fas fa-camera"></i> Attach Photo
+                            <i class="ti ti-camera"></i> Attach Photo
                         </label>
                         <img id="startImagePreview" class="modal-image-preview mx-auto" src="#" alt="Image Preview" />
                         <div id="start-image-size-info" class="form-text mt-1"></div>
@@ -490,7 +498,7 @@
                         <input type="file" name="start_task_image" id="edit_start_image_input" class="file-input-hidden"
                             accept="image/*" capture="environment" required>
                         <label for="edit_start_image_input" class="file-input-label">
-                            <i class="fas fa-camera"></i> Take New Photo
+                            <i class="ti ti-camera"></i> Take New Photo
                         </label>
                         <img id="editStartPreview" class="modal-image-preview mx-auto" src="#" alt="New Preview" />
                         <div id="edit-start-size-info" class="form-text mt-1"></div>
@@ -520,7 +528,7 @@
                         <input type="file" name="end_task_image" id="end_task_image_input" class="file-input-hidden"
                             accept="image/*" capture="environment" required>
                         <label for="end_task_image_input" class="file-input-label">
-                            <i class="fas fa-camera"></i> Attach Photo
+                            <i class="ti ti-camera"></i> Attach Photo
                         </label>
                         <img id="endImagePreview" class="modal-image-preview mx-auto" src="#" alt="Image Preview" />
                         <div id="end-image-size-info" class="form-text mt-1"></div>
@@ -552,7 +560,7 @@
                         <input type="file" name="end_task_image" id="edit_end_image_input" class="file-input-hidden"
                             accept="image/*" capture="environment" required>
                         <label for="edit_end_image_input" class="file-input-label">
-                            <i class="fas fa-camera"></i> Take New Photo
+                            <i class="ti ti-camera"></i> Take New Photo
                         </label>
                         <img id="editEndPreview" class="modal-image-preview mx-auto" src="#" alt="New Preview" />
                         <div id="edit-end-size-info" class="form-text mt-1"></div>
@@ -577,9 +585,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Use Tabler ti-star icon for rating UI  -->
                     <div class="star-rating d-flex justify-content-center mb-3">
                         @for($i = 1; $i <= 5; $i++)
-                            <i class="fa-regular fa-star star mx-1" data-value="{{ $i }}"></i>
+                            <i class="ti ti-star star mx-1" data-value="{{ $i }}"></i>
                         @endfor
                     </div>
                     <input type="hidden" name="driver_rating" id="driver_rating" required>
@@ -694,9 +703,12 @@
 
                 function updateStars(rating) {
                     stars.forEach(star => {
-                        star.classList.remove('fa-regular', 'fa-solid', 'selected');
-                        if (star.dataset.value <= rating) star.classList.add('fa-solid', 'selected');
-                        else star.classList.add('fa-regular');
+                        star.classList.remove('ti-star-filled', 'selected');
+                        star.classList.add('ti-star');
+                        if (star.dataset.value <= rating) {
+                            star.classList.remove('ti-star');
+                            star.classList.add('ti-star-filled', 'selected');
+                        }
                     });
                 }
             }

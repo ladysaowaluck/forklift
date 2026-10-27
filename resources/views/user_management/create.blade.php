@@ -122,11 +122,9 @@
                         </div>
                     </div>
 
-                    {{-- Create Account Button --}}
                     <div class="d-grid mt-3 mt-md-4">
-                        <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2"
-                            style="background-color: var(--color-secondary); border-color: var(--color-primary);">
-                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        <button type="submit" class="btn btn-action-primary btn-sm btn-md-normal text-white fw-bold py-2">
+                            <i class="ti ti-user-plus me-2"></i>Create Account
                         </button>
                     </div>
                 </form>
@@ -136,7 +134,7 @@
                     <p class="text-muted small mb-0">
                         <a href="{{ route('user.management') }}" class="fw-bold text-decoration-none"
                             style="color: var(--color-secondary);">
-                            <i class="fas fa-arrow-left me-1"></i> Back to User List
+                            <i class="ti ti-arrow-left me-1"></i> Back to User List
                         </a>
                     </p>
                 </div>
@@ -151,17 +149,16 @@
             --color-secondary: #004B8D;
         }
 
-        /* Lady: 
-        #app > nav.navbar {
-            display: none;
-        }
-        */
-        /* unnecessary */
-
         body {
             background: url('{{ asset('images/siam-nistran.jpg') }}') no-repeat center center fixed;
             background-size: cover;
-            font-size: clamp(0.875rem, 1.5vw, 1rem);
+            font-size: 15px;
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
         }
 
         .register-card {

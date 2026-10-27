@@ -4,13 +4,13 @@
 <div class="container py-4">
 
     <h2 class="mb-4 fw-bold">
-        <i class="fas fa-file-alt me-2 text-primary"></i> Transaction Search Report
+        <i class="ti ti-file-description me-2 text-primary"></i> Transaction Search Report
     </h2>
 
     {{-- Search Filter Form --}}
     <div class="card shadow-sm mb-4">
         <div class="card-header fw-semibold bg-light">
-            <i class="fas fa-filter me-1"></i> Search Filters
+            <i class="ti ti-filter me-1"></i> Search Filters
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('transactions.report') }}">
@@ -29,7 +29,7 @@
                         <select name="forklift_id" class="form-select form-select-sm">
                             <option value="">All Forklifts</option>
                             @foreach($forklifts as $f)
-                                <option value="{{ $f->forklift_id }}" @selected(($filters['forklift_id'] ?? '') == $f->forklift_id)>{{ $f->model }}</option>
+                                <option value="{{ $f->forklift_id }}" @selected(($filters['forklift_id'] ?? '') == $f->forklift_id)>{{ $f->model }} ({{ $f->type ?? 'Standard' }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -74,11 +74,11 @@
                     </div>
                     
                     <div class="col-12 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary btn-sm px-4">
-                            <i class="fas fa-search me-1"></i> Search
+                        <button type="submit" class="btn btn-action-primary btn-sm px-4">
+                            <i class="ti ti-search me-1"></i> Search
                         </button>
                         <a href="{{ route('transactions.report') }}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-redo me-1"></i> Reset
+                            <i class="ti ti-rotate-2 me-1"></i> Reset
                         </a>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center bg-light">
                 <span class="fw-semibold">
-                    <i class="fas fa-table me-1"></i>
+                    <i class="ti ti-table me-1"></i>
                     Results: {{ $transactions->count() }} transaction(s) found
                 </span>
 
@@ -104,14 +104,17 @@
                         @endif
                     @endforeach
                     <button type="submit" class="btn btn-success btn-sm">
-                        <i class="fas fa-file-excel me-1"></i> Export to Excel
+                        <i class="ti ti-file-spreadsheet me-1"></i> Export to Excel
                     </button>
                 </form>
             </div>
             <div class="card-body p-0">
+                @php
+                    $isAdminOrChecker = in_array(strtolower(Auth::user()->role ?? ''), ['admin', 'checker']);
+                @endphp
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-sm mb-0 small">
-                        <thead class="table-dark">
+                    <table class="table mb-0 modern-table align-middle">
+                        <thead>
                             <tr>
                                 <th>#ID</th>
                                 <th>Status</th>
@@ -119,9 +122,9 @@
                                 <th>Driver</th>
                                 <th>From</th>
                                 <th>To</th>
-                                <th>Items</th>
-                                <th>Created</th>
-                                <th>Completed</th>
+                                <th class="text-end col-num">Items</th>
+                                <th class="text-end col-num">Created</th>
+                                <th class="text-end col-num">Completed</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,13 +148,13 @@
                                         @endphp
                                         <span class="badge bg-{{ $badge }}">{{ $t->status }}</span>
                                     </td>
-                                    <td>{{ optional($t->forklift)->model ?? '-' }}</td>
+                                    <td>{{ optional($t->forklift)->model ? optional($t->forklift)->model . ' (' . (optional($t->forklift)->type ?? 'Standard') . ')' : '-' }}</td>
                                     <td>{{ optional($t->driver)->name ?? '-' }}</td>
                                     <td>{{ optional($t->warehouseFrom)->name ?? '-' }}</td>
                                     <td>{{ optional($t->warehouseTo)->name ?? '-' }}</td>
-                                    <td>{{ $t->details->count() }} item(s)</td>
-                                    <td>{{ optional($t->created_at)->format('d/m/Y') }}</td>
-                                    <td>{{ optional($t->completed_at)->format('d/m/Y') ?? '-' }}</td>
+                                    <td class="text-end col-num">{{ $t->details->count() }} item(s)</td>
+                                    <td class="text-end col-num">{{ optional($t->created_at)->format('d/m/Y') }}</td>
+                                    <td class="text-end col-num">{{ optional($t->completed_at)->format('d/m/Y') ?? '-' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -162,14 +165,27 @@
 
     @elseif(request()->hasAny(['status','forklift_id','driver_id','warehouse_from','warehouse_to','date_from','date_to']))
         <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle me-1"></i> No transactions found matching your filters.
+            <i class="ti ti-alert-triangle me-1"></i> No transactions found matching your filters.
         </div>
 
     @else
         <div class="alert alert-info">
-            <i class="fas fa-info-circle me-1"></i> Use the filters above and click <strong>Search</strong> to preview results before exporting.
+            <i class="ti ti-info-circle me-1"></i> Use the filters above and click <strong>Search</strong> to preview results before exporting.
         </div>
     @endif
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAll = document.getElementById('selectAllExport');
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                document.querySelectorAll('.export-check').forEach(cb => {
+                    cb.checked = selectAll.checked;
+                });
+            });
+        }
+    });
+</script>
 @endsection

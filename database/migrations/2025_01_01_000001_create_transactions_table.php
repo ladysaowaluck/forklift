@@ -8,7 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        if (!Schema::hasTable('transactions')) {
+            Schema::create('transactions', function (Blueprint $table) {
             $table->id('transaction_id');
             $table->unsignedBigInteger('forklift_id')->nullable();
             $table->unsignedBigInteger('driver_id')->nullable();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->unsignedBigInteger('rejected_by_driver_id')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     public function down(): void

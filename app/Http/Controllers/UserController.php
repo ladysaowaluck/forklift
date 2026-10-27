@@ -21,8 +21,9 @@ class UserController extends Controller
         }
     
         $users = $query->with('warehouse')->paginate(10);
+        $warehouses = Warehouse::all();
     
-        return view('user_management.index', compact('users'));
+        return view('user_management.index', compact('users', 'warehouses'));
     }
 
 

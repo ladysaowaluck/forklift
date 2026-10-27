@@ -1,101 +1,129 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- Ensure FontAwesome is loaded for icons --}}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #ffffff;
+            --color-secondary: #004B8D;
+            --color-background: #f4f6f9;
+            --color-border: #e3e6f0;
+            --border-radius-md: 0.75rem;
+        }
 
-<style>
-    :root {
-        --color-primary: #ffffff;
-        --color-secondary: #004B8D;
-        --color-background: #f4f6f9;
-        --color-border: #e3e6f0;
-        --border-radius-md: 0.75rem;
-    }
-    body {
-        background-color: var(--color-background);
-        color: #212529;
-        font-size: clamp(0.875rem, 1.5vw, 1rem);
-    }
-    .card-main-content {
-        background-color: #ffffff;
-        border: 1px solid var(--color-border);
-        box-shadow: 0 4px 18px rgba(0,0,0,0.05);
-        border-radius: var(--border-radius-md);
-    }
-</style>
+        body {
+            background-color: var(--color-background);
+            color: #212529;
+            font-size: 15px;
+        }
 
-<div class="container-fluid py-3 py-md-4 px-2 px-md-4">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-xl-6">
-            <div class="card card-main-content border-0">
-                <div class="card-body p-3 p-sm-4 p-lg-5">
+        @media (max-width: 767.98px) {
+            body {
+                font-size: 15px !important;
+            }
+        }
 
-                    {{-- Header --}}
-                    <div class="text-center mb-3 mb-md-4">
-                        <h1 class="fw-bolder fs-3 fs-md-2" style="color: var(--color-secondary);">
-                            <i class="fas fa-edit me-2"></i>Edit Forklift
-                        </h1>
-                        <p class="fs-6 fs-md-5 text-muted mb-0">Update details for: <span class="fw-bold">{{ $forklift->model }}</span></p>
+        .card-main-content {
+            background-color: #ffffff;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius-md);
+        }
+    </style>
+
+    <div class="container-fluid py-3 py-md-4 px-2 px-md-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-xl-6">
+                <div class="card card-main-content border-0">
+                    <div class="card-body p-3 p-sm-4 p-lg-5">
+
+                        {{-- Header --}}
+                        <div class="text-center mb-3 mb-md-4">
+                            <h1 class="fw-bolder fs-3 fs-md-2" style="color: var(--color-secondary);">
+                                <i class="ti ti-edit me-2"></i>Edit Forklift
+                            </h1>
+                            <p class="fs-6 fs-md-5 text-muted mb-0">Update details for: <span
+                                    class="fw-bold">{{ $forklift->model }}</span></p>
+                        </div>
+
+                        {{-- RESTORED ORIGINAL FORM LOGIC, ONLY UI IS CHANGED --}}
+                        <form method="POST" action="{{ route('forklifts.update', $forklift) }}">
+                            @csrf
+                            @method('PUT')
+
+                            {{-- Model Field --}}
+                            <div class="mb-2 mb-md-3">
+                                <label for="model" class="form-label small fw-bold">{{ __('Model') }}</label>
+                                <input id="model" type="text"
+                                    class="form-control form-control-sm form-control-md-normal @error('model') is-invalid @enderror"
+                                    name="model" value="{{ old('model', $forklift->model) }}" required>
+                                @error('model')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Plate Number Field --}}
+                            <div class="mb-2 mb-md-3">
+                                <label for="plate_number" class="form-label small fw-bold">{{ __('Plate Number') }}</label>
+                                <input id="plate_number" type="text"
+                                    class="form-control form-control-sm form-control-md-normal @error('plate_number') is-invalid @enderror"
+                                    name="plate_number" value="{{ old('plate_number', $forklift->plate_number) }}" required>
+                                @error('plate_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-2 mb-md-3">
+                                <label for="type" class="form-label small fw-bold">{{ __('Type') }}</label>
+                                <select id="type"
+                                    class="form-select form-select-sm form-select-md-normal @error('type') is-invalid @enderror"
+                                    name="type" required>
+                                    <option value="Electric (EV)" {{ old('type', $forklift->type) == 'Electric (EV)' ? 'selected' : '' }}>Electric (EV)</option>
+                                    <option value="Standard" {{ old('type', $forklift->type ?? 'Standard') == 'Standard' ? 'selected' : '' }}>Standard</option>
+                                </select>
+                                @error('type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Status Field --}}
+                            <div class="mb-3 mb-md-4">
+                                <label for="status" class="form-label small fw-bold">{{ __('Status') }}</label>
+                                <select id="status"
+                                    class="form-select form-select-sm form-select-md-normal @error('status') is-invalid @enderror"
+                                    name="status" required>
+                                    {{-- RESTORED ORIGINAL LOGIC --}}
+                                    <option value="Active" {{ $forklift->status == 'Active' ? 'selected' : '' }}>Active
+                                    </option>
+                                    <option value="Maintenance" {{ $forklift->status == 'Maintenance' ? 'selected' : '' }}>
+                                        Maintenance</option>
+                                    <option value="Inactive" {{ $forklift->status == 'Inactive' ? 'selected' : '' }}>Inactive
+                                    </option>
+                                </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Submit Button with harmonious hover color --}}
+                            <div class="d-grid gap-2 mt-3 mt-md-4">
+                                <button type="submit"
+                                    class="btn btn-action-primary btn-sm btn-md-normal text-white fw-bold py-2">
+                                    <i class="ti ti-device-floppy me-2"></i>{{ __('Update Forklift') }}
+                                </button>
+                            </div>
+                        </form>
+
+                        {{-- Back Button --}}
+                        <div class="text-center mt-3 mt-md-4">
+                            <a href="{{ route('forklift.management') }}"
+                                class="btn btn-link btn-sm text-secondary text-decoration-none">
+                                <i class="ti ti-arrow-left me-1"></i>Back to Forklift List
+                            </a>
+                        </div>
+
                     </div>
-                    
-                    {{-- RESTORED ORIGINAL FORM LOGIC, ONLY UI IS CHANGED --}}
-                    <form method="POST" action="{{ route('forklifts.update', $forklift) }}">
-                        @csrf
-                        @method('PUT')
-
-                        {{-- Model Field --}}
-                        <div class="mb-2 mb-md-3">
-                            <label for="model" class="form-label small fw-bold">{{ __('Model') }}</label>
-                            <input id="model" type="text" class="form-control form-control-sm form-control-md-normal @error('model') is-invalid @enderror" 
-                                   name="model" value="{{ old('model', $forklift->model) }}" required>
-                            @error('model')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Plate Number Field --}}
-                        <div class="mb-2 mb-md-3">
-                            <label for="plate_number" class="form-label small fw-bold">{{ __('Plate Number') }}</label>
-                            <input id="plate_number" type="text" class="form-control form-control-sm form-control-md-normal @error('plate_number') is-invalid @enderror" 
-                                   name="plate_number" value="{{ old('plate_number', $forklift->plate_number) }}" required>
-                            @error('plate_number')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Status Field --}}
-                        <div class="mb-3 mb-md-4">
-                            <label for="status" class="form-label small fw-bold">{{ __('Status') }}</label>
-                            <select id="status" class="form-select form-select-sm form-select-md-normal @error('status') is-invalid @enderror" name="status" required>
-                                {{-- RESTORED ORIGINAL LOGIC --}}
-                                <option value="Active" {{ $forklift->status == 'Active' ? 'selected' : '' }}>Active</option>
-                                <option value="Maintenance" {{ $forklift->status == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
-                                <option value="Inactive" {{ $forklift->status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
-                            </select>
-                            @error('status')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Submit Button --}}
-                        <div class="d-grid gap-2 mt-3 mt-md-4">
-                            <button type="submit" class="btn btn-primary btn-sm btn-md-normal text-white fw-bold py-2" style="background-color: var(--color-secondary); border-color: var(--color-primary);">
-                                <i class="fas fa-save me-2"></i>{{ __('Update Forklift') }}
-                            </button>
-                        </div>
-                    </form>
-
-                    {{-- Back Button --}}
-                    <div class="text-center mt-3 mt-md-4">
-                        <a href="{{ route('forklift.management') }}" class="btn btn-link btn-sm text-secondary text-decoration-none">
-                            <i class="fas fa-arrow-left me-1"></i>Back to Forklift List
-                        </a>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection

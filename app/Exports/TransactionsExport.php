@@ -24,6 +24,10 @@ class TransactionsExport implements FromCollection, WithHeadings
     {
         $query = Transaction::with(['forklift', 'driver', 'warehouseFrom', 'warehouseTo', 'details']);
 
+        if (!empty($this->filters['transaction_ids'])) {
+            $query->whereIn('transaction_id', (array) $this->filters['transaction_ids']);
+        }
+
         if (!empty($this->filters['forklift_id'])) {
             $query->where('forklift_id', $this->filters['forklift_id']);
         }
